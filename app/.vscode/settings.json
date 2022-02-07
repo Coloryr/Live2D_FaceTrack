@@ -1,0 +1,18 @@
+{
+    "files.associations": {
+        "cstdlib": "cpp",
+        "compare": "cpp",
+        "memory": "cpp",
+        "tuple": "cpp",
+        "type_traits": "cpp",
+        "utility": "cpp",
+        "xmemory": "cpp",
+        "xstring": "cpp",
+        "xtr1common": "cpp",
+        "xutility": "cpp",
+        "xlocale": "cpp",
+        "initializer_list": "cpp",
+        "vector": "cpp",
+        "system_error": "cpp"
+    }
+}

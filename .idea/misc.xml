@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/code/Live2D_FaceTrack/app/src/main/res/layout/activity_main.xml" value="0.18489583333333334" />
+        <entry key="..\:/code/Live2D_FaceTrack/app/src/main/res/layout/fragment_dashboard.xml" value="0.25" />
+        <entry key="..\:/code/Live2D_For_Android/app/src/main/res/layout/activity_main.xml" value="0.5855096882898062" />
+        <entry key="..\:/code/Live2D_For_Android/app/src/main/res/layout/fragment_dashboard.xml" value="0.3016304347826087" />
+        <entry key="..\:/code/project13/android/app/src/main/res/drawable/side_nav_bar.xml" value="0.18645833333333334" />
+        <entry key="..\:/code/project13/android/app/src/main/res/layout/activity_main.xml" value="0.22" />
+        <entry key="..\:/code/project13/android/app/src/main/res/layout/fragment_dashboard.xml" value="0.3350383631713555" />
+        <entry key="..\:/temp_code/CubismSdkForNative-4-r.4/Samples/OpenGL/Demo/proj.android.cmake/Full/app/src/main/res/drawable/ic_dashboard_black_24dp.xml" value="0.16354166666666667" />
+        <entry key="..\:/temp_code/CubismSdkForNative-4-r.4/Samples/OpenGL/Demo/proj.android.cmake/Full/app/src/main/res/drawable/ic_home_black_24dp.xml" value="0.16354166666666667" />
+        <entry key="..\:/temp_code/CubismSdkForNative-4-r.4/Samples/OpenGL/Demo/proj.android.cmake/Full/app/src/main/res/drawable/ic_launcher_background.xml" value="0.16354166666666667" />
+        <entry key="..\:/temp_code/CubismSdkForNative-4-r.4/Samples/OpenGL/Demo/proj.android.cmake/Full/app/src/main/res/drawable/ic_notifications_black_24dp.xml" value="0.16354166666666667" />
+        <entry key="..\:/temp_code/CubismSdkForNative-4-r.4/Samples/OpenGL/Demo/proj.android.cmake/Full/app/src/main/res/drawable/side_nav_bar.xml" value="0.16354166666666667" />
+        <entry key="..\:/temp_code/CubismSdkForNative-4-r.4/Samples/OpenGL/Demo/proj.android.cmake/Full/app/src/main/res/layout-v23/fragment_dashboard.xml" value="0.3609375" />
+        <entry key="..\:/temp_code/CubismSdkForNative-4-r.4/Samples/OpenGL/Demo/proj.android.cmake/Full/app/src/main/res/layout/activity_main.xml" value="0.3619791666666667" />
+        <entry key="..\:/temp_code/CubismSdkForNative-4-r.4/Samples/OpenGL/Demo/proj.android.cmake/Full/app/src/main/res/layout/activity_main2.xml" value="0.25" />
+        <entry key="..\:/temp_code/CubismSdkForNative-4-r.4/Samples/OpenGL/Demo/proj.android.cmake/Full/app/src/main/res/layout/app_bar_main.xml" value="0.3619791666666667" />
+        <entry key="..\:/temp_code/CubismSdkForNative-4-r.4/Samples/OpenGL/Demo/proj.android.cmake/Full/app/src/main/res/layout/content_main.xml" value="0.3619791666666667" />
+        <entry key="..\:/temp_code/CubismSdkForNative-4-r.4/Samples/OpenGL/Demo/proj.android.cmake/Full/app/src/main/res/layout/fragment_dashboard.xml" value="0.3619791666666667" />
+        <entry key="..\:/temp_code/CubismSdkForNative-4-r.4/Samples/OpenGL/Demo/proj.android.cmake/Full/app/src/main/res/layout/fragment_first.xml" value="0.3619791666666667" />
+        <entry key="..\:/temp_code/CubismSdkForNative-4-r.4/Samples/OpenGL/Demo/proj.android.cmake/Full/app/src/main/res/layout/fragment_home.xml" value="0.3619791666666667" />
+        <entry key="..\:/temp_code/CubismSdkForNative-4-r.4/Samples/OpenGL/Demo/proj.android.cmake/Full/app/src/main/res/layout/fragment_notifications.xml" value="0.3619791666666667" />
+        <entry key="..\:/temp_code/CubismSdkForNative-4-r.4/Samples/OpenGL/Demo/proj.android.cmake/Full/app/src/main/res/layout/fragment_second.xml" value="0.3619791666666667" />
+        <entry key="..\:/temp_code/CubismSdkForNative-4-r.4/Samples/OpenGL/Demo/proj.android.cmake/Full/app/src/main/res/layout/fragment_slideshow.xml" value="0.3619791666666667" />
+        <entry key="..\:/temp_code/CubismSdkForNative-4-r.4/Samples/OpenGL/Demo/proj.android.cmake/Full/app/src/main/res/layout/nav_header_main.xml" value="0.3619791666666667" />
+        <entry key="..\:/temp_code/CubismSdkForNative-4-r.4/Samples/OpenGL/Demo/proj.android.cmake/Full/app/src/main/res/menu/bottom_nav_menu.xml" value="0.3765625" />
+        <entry key="..\:/temp_code/CubismSdkForNative-4-r.4/Samples/OpenGL/Demo/proj.android.cmake/Full/app/src/main/res/menu/main_activity2.xml" value="0.3765625" />
+      </map>
+    </option>
+  </component>
+  <component name="ExternalStorageConfigurationManager" enabled="true" />
+  <component name="FrameworkDetectionExcludesConfiguration">
+    <file type="web" url="file://$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK" />
+</project>
