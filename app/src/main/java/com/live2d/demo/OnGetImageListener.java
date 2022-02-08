@@ -202,66 +202,64 @@ public class OnGetImageListener implements OnImageAvailableListener {
 
         mInferenceHandler.post(
                 () -> {
-                    if (mframeNum % 3 == 0) {
-                        synchronized (OnGetImageListener.this) {
-                            results = mFaceDet.detect(mResizedBitmap);
-                        }
+                    synchronized (OnGetImageListener.this) {
+                        results = mFaceDet.detect(mResizedBitmap);
+                    }
 
-                        if (results.size() != 0) {
-                            for (final VisionDetRet ret : results) {
-                                // Draw landmark
-                                ArrayList<Point> landmarks = ret.getFaceLandmarks();
+                    if (results.size() != 0) {
+                        for (final VisionDetRet ret : results) {
+                            // Draw landmark
+                            ArrayList<Point> landmarks = ret.getFaceLandmarks();
 
-                                Point p0 = landmarks.get(48);
-                                Point p1 = landmarks.get(54);
+                            Point p0 = landmarks.get(48);
+                            Point p1 = landmarks.get(54);
 
-                                double r = (double) (p0.y - p1.y) / (p0.x - p1.x);
+                            double r = (double) (p0.y - p1.y) / (p0.x - p1.x);
 
-                                TrackSave.z = (float) (r * 100);
+                            TrackSave.z = (float) (r * 100);
 
-                                Point p2 = landmarks.get(0);
-                                Point p3 = landmarks.get(36);
-                                Point p4 = landmarks.get(16);
-                                Point p5 = landmarks.get(45);
+                            Point p2 = landmarks.get(0);
+                            Point p3 = landmarks.get(36);
+                            Point p4 = landmarks.get(16);
+                            Point p5 = landmarks.get(45);
 
-                                r = dis(p2, p3) - dis(p4, p5);
+                            r = dis(p2, p3) - dis(p4, p5);
 
-                                TrackSave.x = (float) r;
+                            TrackSave.x = (float) r;
 
-                                Point p6 = landmarks.get(43);
-                                Point p7 = landmarks.get(47);
-                                Point p8 = landmarks.get(44);
-                                Point p9 = landmarks.get(46);
+                            Point p6 = landmarks.get(43);
+                            Point p7 = landmarks.get(47);
+                            Point p8 = landmarks.get(44);
+                            Point p9 = landmarks.get(46);
 
-                                Point p10 = landmarks.get(38);
-                                Point p11 = landmarks.get(40);
-                                Point p12 = landmarks.get(37);
-                                Point p13 = landmarks.get(41);
+                            Point p10 = landmarks.get(38);
+                            Point p11 = landmarks.get(40);
+                            Point p12 = landmarks.get(37);
+                            Point p13 = landmarks.get(41);
 
-                                r = (dis(p6, p7) + dis(p8, p9)) / 2;
+                            r = (dis(p6, p7) + dis(p8, p9)) / 2;
 
-                                TrackSave.lo = (float) ((r - 4) / 4);
+                            TrackSave.lo = (float) ((r - 4) / 4);
 
-                                r = (dis(p10, p11) + dis(p12, p13)) / 2;
+                            r = (dis(p10, p11) + dis(p12, p13)) / 2;
 
-                                TrackSave.ro = (float) ((r - 4) / 4);
+                            TrackSave.ro = (float) ((r - 4) / 4);
 
-                                Point p14 = landmarks.get(50);
-                                Point p15 = landmarks.get(58);
+                            Point p14 = landmarks.get(50);
+                            Point p15 = landmarks.get(58);
 
-                                Point p16 = landmarks.get(52);
-                                Point p17 = landmarks.get(56);
+                            Point p16 = landmarks.get(52);
+                            Point p17 = landmarks.get(56);
 
-                                r = (dis(p14, p15) + dis(p16, p17)) / 2;
-                                TrackSave.mo = (float) ((r - 17) / 17);
+                            r = (dis(p14, p15) + dis(p16, p17)) / 2;
+                            TrackSave.mo = (float) ((r - 17) / 17);
 
-                                Point p18 = landmarks.get(57);
-                                Point p19 = landmarks.get(8);
+                            Point p18 = landmarks.get(57);
+                            Point p19 = landmarks.get(8);
 
-                                r = dis(p18, p19);
+                            r = dis(p18, p19);
 
-                                TrackSave.y = (float) (r - 17) * 4;
-                            }
+                            TrackSave.y = (float) (r - 17) * 4;
                         }
                     }
 

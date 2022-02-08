@@ -18,15 +18,18 @@ public class GLRenderer implements GLSurfaceView.Renderer {
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
         JniBridgeJava.nativeOnSurfaceCreated();
+        MainActivity.ar.onSurfaceCreated();
     }
 
     @Override
     public void onSurfaceChanged(GL10 gl, int width, int height) {
         JniBridgeJava.nativeOnSurfaceChanged(width, height);
+        MainActivity.ar.onSurfaceChanged(width, height);
     }
 
     @Override
     public void onDrawFrame(GL10 gl) {
+        MainActivity.ar.onDrawFrame();
         JniBridgeJava.nativeOnDrawFrame();
     }
 }

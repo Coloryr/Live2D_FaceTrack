@@ -26,6 +26,9 @@ public class MainActivity extends AppCompatActivity {
     @SuppressLint("StaticFieldLeak")
     public static GLView glView;
 
+    @SuppressLint("StaticFieldLeak")
+    public static ArTest ar;
+
     public static CameraConnection cameraConnection;
 
     private final String[] permissions = new String[]{
@@ -53,7 +56,9 @@ public class MainActivity extends AppCompatActivity {
             FileUtils.copyFileFromRawToOthers(this, R.raw.shape_predictor_68_face_landmarks, Constants.getFaceShapeModelPath());
         }
 
-        cameraConnection = CameraConnection.newInstance();
+        //cameraConnection = CameraConnection.newInstance();
+
+        ar = new ArTest(this);
     }
 
     private void isPermission() {
@@ -71,14 +76,16 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        cameraConnection.startBackgroundThread();
+        //cameraConnection.startBackgroundThread();
 
-        cameraConnection.openCamera(1280, 1280);
+        //cameraConnection.openCamera(1280, 1280);
+        ar.onResume();
     }
 
     @Override
     protected void onPause() {
-        cameraConnection.onPause();
+        //cameraConnection.onPause();
         super.onPause();
+        ar.onPause();
     }
 }
