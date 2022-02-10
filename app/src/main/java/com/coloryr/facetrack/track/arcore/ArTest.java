@@ -173,6 +173,13 @@ public class ArTest {
                 float y = post.qy();
                 float z = post.qz();
 
+                float x1 = post.tx();
+                float y1 = post.ty();
+                float z1 = post.tz();
+
+                TrackSave.bX = -x1 * 30;
+                TrackSave.bY = y1 * 30;
+
                 TrackSave.y = -x * 200;
                 TrackSave.x = -y * 200;
                 TrackSave.z = z * 200;

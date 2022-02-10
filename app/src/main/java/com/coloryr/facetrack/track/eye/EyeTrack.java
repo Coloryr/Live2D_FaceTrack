@@ -1,10 +1,15 @@
 package com.coloryr.facetrack.track.eye;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.media.Image;
+import android.os.Build;
 import android.util.Log;
+import com.coloryr.facetrack.MainActivity;
 import com.coloryr.facetrack.R;
+import com.coloryr.facetrack.live2d.TrackSave;
 import org.opencv.android.CameraBridgeViewBase;
+import org.opencv.android.Utils;
 import org.opencv.core.*;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
@@ -15,6 +20,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 public class EyeTrack {
     private final static String TAG = "eye";
@@ -25,19 +32,9 @@ public class EyeTrack {
     private Mat mGray;
     private int mAbsoluteFaceSize = 0;
     private float mRelativeFaceSize = 0.2f;
-    private Mat mZoomWindow;
-    private Mat mZoomWindow2;
-
-    private int learn_frames = 0;
-    private Mat teplateR;
-    private Mat teplateL;
-    int method = 1;
 
     private CascadeClassifier mJavaDetector;
     private CascadeClassifier mJavaDetectorEye;
-
-    private double xCenter = -1;
-    private double yCenter = -1;
 
     public EyeTrack(Context context) {
         this.context = context;
@@ -59,7 +56,7 @@ public class EyeTrack {
         os.close();
 
         // load cascade file from application resources
-        InputStream ise = context.getResources().openRawResource(R.raw.haarcascade_lefteye_2splits);
+        InputStream ise = context.getResources().openRawResource(R.raw.haarcascade_eye);
         File cascadeDirEye = context.getDir("cascade", Context.MODE_PRIVATE);
         mCascadeFileEye = new File(cascadeDirEye, "haarcascade_lefteye_2splits.xml");
         FileOutputStream ose = new FileOutputStream(mCascadeFileEye);
@@ -84,48 +81,13 @@ public class EyeTrack {
         } else
             Log.i(TAG, "Loaded cascade classifier from " + mCascadeFileEye.getAbsolutePath());
 
+        cascadeDir.delete();
         cascadeDirEye.delete();
 
         mGray = new Mat();
         mRgba = new Mat();
-    }
 
-    private Mat get_template(CascadeClassifier clasificator, Rect area, int size) {
-        Mat template = new Mat();
-        Mat mROI = mGray.submat(area);
-        MatOfRect eyes = new MatOfRect();
-        Point iris = new Point();
-        Rect eye_template;
-        clasificator.detectMultiScale(mROI, eyes, 1.15, 2,
-                Objdetect.CASCADE_FIND_BIGGEST_OBJECT
-                        | Objdetect.CASCADE_SCALE_IMAGE, new Size(30, 30),
-                new Size());
-
-        Rect[] eyesArray = eyes.toArray();
-        for (int i = 0; i < eyesArray.length; ) {
-            Rect e = eyesArray[i];
-            e.x = area.x + e.x;
-            e.y = area.y + e.y;
-            Rect eye_only_rectangle = new Rect((int) e.tl().x,
-                    (int) (e.tl().y + e.height * 0.4), e.width,
-                    (int) (e.height * 0.6));
-            mROI = mGray.submat(eye_only_rectangle);
-            Mat vyrez = mRgba.submat(eye_only_rectangle);
-
-
-            Core.MinMaxLocResult mmG = Core.minMaxLoc(mROI);
-
-            Imgproc.circle(vyrez, mmG.minLoc, 2, new Scalar(255, 255, 255, 255), 2);
-            iris.x = mmG.minLoc.x + eye_only_rectangle.x;
-            iris.y = mmG.minLoc.y + eye_only_rectangle.y;
-            eye_template = new Rect((int) iris.x - size / 2, (int) iris.y
-                    - size / 2, size, size);
-            Imgproc.rectangle(mRgba, eye_template.tl(), eye_template.br(),
-                    new Scalar(255, 0, 0, 255), 2);
-            template = (mGray.submat(eye_template)).clone();
-            return template;
-        }
-        return template;
+        teplateR = new Mat();
     }
 
     public Mat gray(Image mImage) {
@@ -144,7 +106,6 @@ public class EyeTrack {
         int w = mImage.getWidth();
         int h = mImage.getHeight();
         int chromaPixelStride = planes[1].getPixelStride();
-
 
         if (chromaPixelStride == 2) { // Chroma channels are interleaved
             assert (planes[0].getPixelStride() == 1);
@@ -225,6 +186,80 @@ public class EyeTrack {
         }
     }
 
+    private Mat teplateR;
+
+    public void onCameraFrame(Image image) {
+        mRgba = rgba(image);
+
+        Core.transpose(mRgba, mRgba);
+        Core.flip(mRgba, mRgba, 0);
+
+        mGray = gray(image);
+
+        Core.transpose(mGray, mGray);
+        Core.flip(mGray, mGray, 0);
+
+        if (mAbsoluteFaceSize == 0) {
+            int height = mGray.rows();
+            if (Math.round(height * mRelativeFaceSize) > 0) {
+                mAbsoluteFaceSize = Math.round(height * mRelativeFaceSize);
+            }
+        }
+
+        MatOfRect faces = new MatOfRect();
+
+        if (mJavaDetector != null)
+            mJavaDetector.detectMultiScale(mGray, faces, 1.1, 2, 2,
+                    new Size(mAbsoluteFaceSize, mAbsoluteFaceSize), new Size());
+
+        Rect[] facesArray = faces.toArray();
+        for (Rect rect : facesArray) {
+            MatOfRect eye = new MatOfRect();
+            Mat mROI = mGray.submat(rect);
+            mROI = mROI.submat(0, mROI.width() / 2, 0, mROI.height() / 2);
+
+            mJavaDetectorEye.detectMultiScale(mROI, eye, 1.1, 2, 2,
+                    new Size(20, 20), new Size());
+
+            Rect[] eyeArray = eye.toArray();
+            int count = eyeArray.length;
+            if (count != 0) {
+                Rect item = eyeArray[0];
+                Mat mROI1 = mROI.submat(item);
+//                try {
+//                    Mat mROI2 = new Mat();
+//                    Imgproc.threshold(mROI1, mROI2, 0, 255, Imgproc.THRESH_BINARY_INV | Imgproc.THRESH_OTSU);
+////                    Mat element1 = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(3, 3), new Point(-1, -1));
+////                    Imgproc.morphologyEx(mROI2, mROI2, Imgproc.MORPH_CLOSE, element1, new Point(-1, -1), 1);
+//
+//                    Mat element2 = Imgproc.getStructuringElement(Imgproc.MORPH_ELLIPSE, new Size(12, 12), new Point(-1, -1));
+//                    Mat dst = new Mat();
+//                    Imgproc.morphologyEx(mROI2, dst, Imgproc.MORPH_OPEN, element2);
+//
+//                    Bitmap bitmap = Bitmap.createBitmap(dst.width(), dst.height(), Bitmap.Config.ARGB_8888);
+//                    Utils.matToBitmap(dst, bitmap);
+//
+//                    MainActivity.app.runOnUiThread(() -> {
+//                        MainActivity.imageView.setImageBitmap(bitmap);
+//                    });
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+
+                if (learn_frames < 5) {
+                    teplateR = get_template(mROI1, item, 24);
+                    learn_frames++;
+                } else {
+                    // Learning finished, use the new templates for template
+                    // matching
+                    match_eye(item, teplateR, 0);
+                }
+            }
+        }
+    }
+
+    private int learn_frames = 0;
+
     private void match_eye(Rect area, Mat mTemplate, int type) {
         Point matchLoc;
         Mat mROI = mGray.submat(area);
@@ -279,71 +314,26 @@ public class EyeTrack {
 
     }
 
-    private void CreateAuxiliaryMats() {
-        if (mGray.empty())
-            return;
+    private Mat get_template(Mat mROI, Rect area, int size) {
+        Mat template;
 
-        int rows = mGray.rows();
-        int cols = mGray.cols();
+        Point iris = new Point();
+        Rect eye_template;
+        area.x = area.x + area.x;
+        area.y = area.y + area.y;
+        Rect eye_only_rectangle = new Rect((int) area.tl().x,
+                (int) (area.tl().y + area.height * 0.4), area.width,
+                (int) (area.height * 0.6));
+        mROI = mROI.submat(eye_only_rectangle);
 
-        if (mZoomWindow == null) {
-            mZoomWindow = mRgba.submat(rows / 2 + rows / 10, rows, cols / 2
-                    + cols / 10, cols);
-            mZoomWindow2 = mRgba.submat(0, rows / 2 - rows / 10, cols / 2
-                    + cols / 10, cols);
-        }
+        Core.MinMaxLocResult mmG = Core.minMaxLoc(mROI);
 
-    }
+        iris.x = mmG.minLoc.x + eye_only_rectangle.x;
+        iris.y = mmG.minLoc.y + eye_only_rectangle.y;
+        eye_template = new Rect((int) iris.x - size / 2, (int) iris.y
+                - size / 2, size, size);
 
-    public void onCameraFrame(Image image) {
-        mRgba = rgba(image);
-        mGray = gray(image);
-
-        if (mAbsoluteFaceSize == 0) {
-            int height = mGray.rows();
-            if (Math.round(height * mRelativeFaceSize) > 0) {
-                mAbsoluteFaceSize = Math.round(height * mRelativeFaceSize);
-            }
-        }
-
-        if (mZoomWindow == null || mZoomWindow2 == null)
-            CreateAuxiliaryMats();
-
-        MatOfRect faces = new MatOfRect();
-
-        if (mJavaDetector != null)
-            mJavaDetector.detectMultiScale(mGray, faces, 1.1, 2, 2, // TODO: objdetect.CV_HAAR_SCALE_IMAGE
-                    new Size(mAbsoluteFaceSize, mAbsoluteFaceSize), new Size());
-
-        Rect[] facesArray = faces.toArray();
-        for (Rect rect : facesArray) {
-            xCenter = (rect.x + rect.width + rect.x) / 2;
-            yCenter = (rect.y + rect.y + rect.height) / 2;
-            Point center = new Point(xCenter, yCenter);
-
-            // compute the eye area
-            Rect eyearea = new Rect(rect.x + rect.width / 8,
-                    (int) (rect.y + (rect.height / 4.5)), rect.width - 2 * rect.width / 8,
-                    (int) (rect.height / 3.0));
-            // split it
-            Rect eyearea_right = new Rect(rect.x + rect.width / 16,
-                    (int) (rect.y + (rect.height / 4.5)),
-                    (rect.width - 2 * rect.width / 16) / 2, (int) (rect.height / 3.0));
-            Rect eyearea_left = new Rect(rect.x + rect.width / 16
-                    + (rect.width - 2 * rect.width / 16) / 2,
-                    (int) (rect.y + (rect.height / 4.5)),
-                    (rect.width - 2 * rect.width / 16) / 2, (int) (rect.height / 3.0));
-
-            if (learn_frames < 200) {
-                teplateR = get_template(mJavaDetectorEye, eyearea_right, 24);
-                teplateL = get_template(mJavaDetectorEye, eyearea_left, 24);
-                learn_frames++;
-            } else {
-                // Learning finished, use the new templates for template
-                // matching
-                match_eye(eyearea_right, teplateR, method);
-                match_eye(eyearea_left, teplateL, method);
-            }
-        }
+        template = (mGray.submat(eye_template)).clone();
+        return template;
     }
 }

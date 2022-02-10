@@ -26,4 +26,28 @@ public class TrackSave {
     0 2
      */
     public static float mo = 0;
+    /*
+    -1 1
+     */
+    public static float eyeX = 0;
+    /*
+    -1 1
+     */
+    public static float eyeY = 0;
+    /*
+    -1 1
+     */
+    public static float bX = 0;
+    /*
+   -1 1
+    */
+    public static float bY = 0;
+    /*
+    0 2
+     */
+    public static float elO = 1.0f;
+    /*
+    0 2
+     */
+    public static float erO = 1.0f;
 }

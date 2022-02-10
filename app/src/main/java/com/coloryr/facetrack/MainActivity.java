@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -36,6 +37,9 @@ public class MainActivity extends AppCompatActivity {
     @SuppressLint("StaticFieldLeak")
     public static EyeTrack eye;
 
+    @SuppressLint("StaticFieldLeak")
+    public static ImageView imageView;
+
     private final String[] permissions = new String[]{
             Manifest.permission.CAMERA
     };
@@ -47,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
         app = this;
         glView = new GLView(getBaseContext());
         setContentView(R.layout.activity_main);
+        imageView = findViewById(R.id.image);
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
