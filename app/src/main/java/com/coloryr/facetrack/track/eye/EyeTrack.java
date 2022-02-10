@@ -218,122 +218,57 @@ public class EyeTrack {
             Mat mROI = mGray.submat(rect);
             mROI = mROI.submat(0, mROI.width() / 2, 0, mROI.height() / 2);
 
-            mJavaDetectorEye.detectMultiScale(mROI, eye, 1.1, 2, 2,
-                    new Size(20, 20), new Size());
+            mJavaDetectorEye.detectMultiScale(mROI, eye, 1.15, 2,
+                    Objdetect.CASCADE_FIND_BIGGEST_OBJECT
+                            | Objdetect.CASCADE_SCALE_IMAGE, new Size(30, 30),
+                    new Size());
 
             Rect[] eyeArray = eye.toArray();
             int count = eyeArray.length;
             if (count != 0) {
                 Rect item = eyeArray[0];
-                Mat mROI1 = mROI.submat(item);
-//                try {
-//                    Mat mROI2 = new Mat();
-//                    Imgproc.threshold(mROI1, mROI2, 0, 255, Imgproc.THRESH_BINARY_INV | Imgproc.THRESH_OTSU);
-////                    Mat element1 = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(3, 3), new Point(-1, -1));
-////                    Imgproc.morphologyEx(mROI2, mROI2, Imgproc.MORPH_CLOSE, element1, new Point(-1, -1), 1);
-//
-//                    Mat element2 = Imgproc.getStructuringElement(Imgproc.MORPH_ELLIPSE, new Size(12, 12), new Point(-1, -1));
-//                    Mat dst = new Mat();
-//                    Imgproc.morphologyEx(mROI2, dst, Imgproc.MORPH_OPEN, element2);
-//
-//                    Bitmap bitmap = Bitmap.createBitmap(dst.width(), dst.height(), Bitmap.Config.ARGB_8888);
-//                    Utils.matToBitmap(dst, bitmap);
-//
-//                    MainActivity.app.runOnUiThread(() -> {
-//                        MainActivity.imageView.setImageBitmap(bitmap);
-//                    });
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
+                mROI = mROI.submat(item);
+                Core.MinMaxLocResult mmG = Core.minMaxLoc(mROI);
+                Imgproc.circle(mROI, mmG.minLoc, 2, new Scalar(255, 255, 255, 255), 2);
+                Point iris = mmG.minLoc;
 
-                if (learn_frames < 5) {
-                    teplateR = get_template(mROI1, item, 24);
-                    learn_frames++;
-                } else {
-                    // Learning finished, use the new templates for template
-                    // matching
-                    match_eye(item, teplateR, 0);
+                countX += iris.x;
+                countY += iris.y;
+
+                index++;
+                if (index == 10) {
+                    countX = countX / index;
+                    countY = countY / index;
+                    index = 0;
+
+                    countX = (countX / mROI.width());
+                    countY = (countY / mROI.height());
+                    if(countX < 0.5)
+                    {
+                        countX -= 0.5f;
+                        countX *= 10;
+                    }
+                    else
+                    {
+                        countX -= 0.5f;
+                        countX *= 4;
+                    }
+
+                    TrackSave.eyeX = countX;
+                    TrackSave.eyeY = (countY * 2 - 1.0f) * 2;
                 }
             }
+
+//            Bitmap bitmap = Bitmap.createBitmap(mROI.width(), mROI.height(), Bitmap.Config.ARGB_8888);
+//            Utils.matToBitmap(mROI, bitmap);
+//
+//            MainActivity.app.runOnUiThread(() -> {
+//                MainActivity.imageView.setImageBitmap(bitmap);
+//            });
         }
     }
 
-    private int learn_frames = 0;
-
-    private void match_eye(Rect area, Mat mTemplate, int type) {
-        Point matchLoc;
-        Mat mROI = mGray.submat(area);
-        int result_cols = mROI.cols() - mTemplate.cols() + 1;
-        int result_rows = mROI.rows() - mTemplate.rows() + 1;
-        // Check for bad template size
-        if (mTemplate.cols() == 0 || mTemplate.rows() == 0) {
-            return;
-        }
-        Mat mResult = new Mat(result_cols, result_rows, CvType.CV_8U);
-
-        switch (type) {
-            case Imgproc.TM_SQDIFF:
-                Imgproc.matchTemplate(mROI, mTemplate, mResult, Imgproc.TM_SQDIFF);
-                break;
-            case Imgproc.TM_SQDIFF_NORMED:
-                Imgproc.matchTemplate(mROI, mTemplate, mResult,
-                        Imgproc.TM_SQDIFF_NORMED);
-                break;
-            case Imgproc.TM_CCOEFF:
-                Imgproc.matchTemplate(mROI, mTemplate, mResult, Imgproc.TM_CCOEFF);
-                break;
-            case Imgproc.TM_CCOEFF_NORMED:
-                Imgproc.matchTemplate(mROI, mTemplate, mResult,
-                        Imgproc.TM_CCOEFF_NORMED);
-                break;
-            case Imgproc.TM_CCORR:
-                Imgproc.matchTemplate(mROI, mTemplate, mResult, Imgproc.TM_CCORR);
-                break;
-            case Imgproc.TM_CCORR_NORMED:
-                Imgproc.matchTemplate(mROI, mTemplate, mResult,
-                        Imgproc.TM_CCORR_NORMED);
-                break;
-        }
-
-        Core.MinMaxLocResult mmres = Core.minMaxLoc(mResult);
-        // there is difference in matching methods - best match is max/min value
-        if (type == Imgproc.TM_SQDIFF || type == Imgproc.TM_SQDIFF_NORMED) {
-            matchLoc = mmres.minLoc;
-        } else {
-            matchLoc = mmres.maxLoc;
-        }
-
-        Point matchLoc_tx = new Point(matchLoc.x + area.x, matchLoc.y + area.y);
-        Point matchLoc_ty = new Point(matchLoc.x + mTemplate.cols() + area.x,
-                matchLoc.y + mTemplate.rows() + area.y);
-
-        Imgproc.rectangle(mRgba, matchLoc_tx, matchLoc_ty, new Scalar(255, 255, 0,
-                255));
-        Rect rec = new Rect(matchLoc_tx, matchLoc_ty);
-
-
-    }
-
-    private Mat get_template(Mat mROI, Rect area, int size) {
-        Mat template;
-
-        Point iris = new Point();
-        Rect eye_template;
-        area.x = area.x + area.x;
-        area.y = area.y + area.y;
-        Rect eye_only_rectangle = new Rect((int) area.tl().x,
-                (int) (area.tl().y + area.height * 0.4), area.width,
-                (int) (area.height * 0.6));
-        mROI = mROI.submat(eye_only_rectangle);
-
-        Core.MinMaxLocResult mmG = Core.minMaxLoc(mROI);
-
-        iris.x = mmG.minLoc.x + eye_only_rectangle.x;
-        iris.y = mmG.minLoc.y + eye_only_rectangle.y;
-        eye_template = new Rect((int) iris.x - size / 2, (int) iris.y
-                - size / 2, size, size);
-
-        template = (mGray.submat(eye_template)).clone();
-        return template;
-    }
+    private float countX = 0;
+    private float countY = 0;
+    private int index = 0;
 }
