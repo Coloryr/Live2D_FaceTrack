@@ -23,8 +23,8 @@ static jmethodID g_LoadFileMethodId;
 static jmethodID g_OnLoadModelMethodId;
 static jmethodID g_OnUpdateMethodId;
 
-#define class_name(F) Java_com_live2d_demo_JniBridgeJava_native##F
-#define class_local "com/live2d/demo/JniBridgeJava"
+#define class_name(F) Java_com_coloryr_facetrack_live2d_JniBridgeJava_native##F
+#define class_local "com/coloryr/facetrack/live2d/JniBridgeJava"
 
 JNIEnv *GetEnv()
 {

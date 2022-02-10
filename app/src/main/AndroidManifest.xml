@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.live2d.demo">
+          package="com.coloryr.facetrack">
 
     <uses-feature android:name="android.hardware.camera.ar" android:required="true"/>
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
@@ -19,7 +19,7 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
         <activity
-                android:name=".MainActivity"
+                android:name="com.coloryr.facetrack.MainActivity"
                 android:exported="true"
                 android:label="@string/title_activity_main"
                 android:theme="@style/AppTheme.DarkActionBar">

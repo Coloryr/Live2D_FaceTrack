@@ -7,7 +7,7 @@
 
     <fragment
             android:id="@+id/nav_home"
-            android:name="com.live2d.demo.GLFragment"
+            android:name="com.coloryr.facetrack.GLFragment"
             android:label="@string/menu_home"
             tools:layout="@layout/fragment_dashboard"/>
 
