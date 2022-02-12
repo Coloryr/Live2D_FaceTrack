@@ -1,6 +1,4 @@
-include ':Demo'
-project(':Demo').projectDir = new File(settingsDir, 'app')
+include ':Live2DFaceTrack'
+project(':Live2DFaceTrack').projectDir = new File(settingsDir, 'app')
 
-include ':opencv'
-project(':opencv').projectDir = new File("F:\\opencv\\", 'sdk')
 

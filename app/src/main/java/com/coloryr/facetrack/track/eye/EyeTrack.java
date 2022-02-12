@@ -155,9 +155,9 @@ public class EyeTrack {
 
         double lo1 = dis(qx, qy, p374.getX(), p374.getY());
         double lo = lo1 / s;
-        lo -= 0.32;
+        lo -= 0.28;
         lo /= 0.5;
-        if(lo > 0.85)
+        if(lo > 0.8)
         {
             lo = 1;
         }
@@ -177,8 +177,8 @@ public class EyeTrack {
         double ro1 = dis(qx1, qy1, p145.getX(), p145.getY());
         double ro = ro1 / s;
         ro -= 0.23;
-        ro /= 0.52;
-        if(ro > 0.87)
+        ro /= 0.5;
+        if(ro > 0.8)
         {
             ro = 1;
         }
