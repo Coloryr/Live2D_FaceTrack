@@ -4,50 +4,42 @@ public class TrackSave {
     /*
     -30 30
      */
-    public static float y = 0;
+    public static float AngleY = 0;
     /*
     -60 60
      */
-    public static float x = 0;
+    public static float AngleX = 0;
 
     /*
     -30 30
      */
-    public static float z = 0;
-    /*
-    0 1
-     */
-    public static float lo = 0;
-    /*
-    0 1
-     */
-    public static float ro = 0;
+    public static float AngleZ = 0;
     /*
     0 2
      */
-    public static float mo = 0;
+    public static float MouthOpenY = 0;
     /*
     -1 1
      */
-    public static float eyeX = 0;
+    public static float EyeBallX = 0;
     /*
     -1 1
      */
-    public static float eyeY = 0;
+    public static float EyeBallY = 0;
     /*
     -1 1
      */
-    public static float bX = 0;
+    public static float BodyZ = 0;
     /*
    -1 1
     */
-    public static float bY = 0;
+    public static float BodyY = 0;
     /*
-    0 2
+    -1 0
      */
-    public static float elO = 1.0f;
+    public static float EyeLOpen = 1.0f;
     /*
-    0 2
+    -1 0
      */
-    public static float erO = 1.0f;
+    public static float EyeROpen = 1.0f;
 }

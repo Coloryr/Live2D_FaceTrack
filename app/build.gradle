@@ -57,5 +57,7 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui:2.3.5'
     implementation 'androidx.vectordrawable:vectordrawable:1.1.0'
     implementation 'com.alibaba:fastjson:1.1.73.android'
-    implementation project(path: ':opencv')
+    implementation 'com.google.mediapipe:solution-core:latest.release'
+    implementation 'com.google.mediapipe:facemesh:latest.release'
+    //implementation project(path: ':opencv')
 }

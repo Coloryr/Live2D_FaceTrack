@@ -177,12 +177,12 @@ public class ArTest {
                 float y1 = post.ty();
                 float z1 = post.tz();
 
-                TrackSave.bX = -x1 * 30;
-                TrackSave.bY = y1 * 30;
+                TrackSave.BodyZ = -x1 * 30;
+                TrackSave.BodyY = y1 * 30;
 
-                TrackSave.y = -x * 200;
-                TrackSave.x = -y * 200;
-                TrackSave.z = z * 200;
+                TrackSave.AngleY = -x * 200;
+                TrackSave.AngleX = -y * 200;
+                TrackSave.AngleZ = z * 200;
             }
 
             Image image = frame.acquireCameraImage();

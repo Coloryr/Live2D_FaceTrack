@@ -17,9 +17,6 @@ import com.coloryr.facetrack.track.eye.EyeTrack;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.coloryr.facetrack.track.arcore.ArTest;
 import com.coloryr.facetrack.live2d.GLView;
-import org.opencv.android.BaseLoaderCallback;
-import org.opencv.android.LoaderCallbackInterface;
-import org.opencv.android.OpenCVLoader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,33 +74,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private final BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
-        @Override
-        public void onManagerConnected(int status) {
-            if (status == LoaderCallbackInterface.SUCCESS) {
-                try {
-                    eye.init();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            } else {
-                super.onManagerConnected(status);
-            }
-        }
-    };
 
     @Override
     public void onResume() {
         super.onResume();
-        if (!OpenCVLoader.initDebug()) {
-            Log.d("opencv", "Internal OpenCV library not found. Using OpenCV Manager for initialization");
-            OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION, this, mLoaderCallback);
-        } else {
-            Log.d("opencv", "OpenCV library found inside package. Using it!");
-            mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
-        }
 
         ar.onResume();
+        eye.init();
     }
 
     @Override

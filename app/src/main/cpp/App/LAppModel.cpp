@@ -286,10 +286,10 @@ void LAppModel::SetupModel(ICubismModelSetting *setting)
     }
 
     // EyeBlink
-    if (_modelSetting->GetEyeBlinkParameterCount() > 0)
-    {
-        //_eyeBlink = CubismEyeBlink::Create(_modelSetting);
-    }
+//    if (_modelSetting->GetEyeBlinkParameterCount() > 0)
+//    {
+//        _eyeBlink = CubismEyeBlink::Create(_modelSetting);
+//    }
 
     // Breath
     {
@@ -317,11 +317,11 @@ void LAppModel::SetupModel(ICubismModelSetting *setting)
 
     // EyeBlinkIds
     {
-        csmInt32 eyeBlinkIdCount = _modelSetting->GetEyeBlinkParameterCount();
-        for (csmInt32 i = 0; i < eyeBlinkIdCount; ++i)
-        {
-            _eyeBlinkIds.PushBack(_modelSetting->GetEyeBlinkParameterId(i));
-        }
+//        csmInt32 eyeBlinkIdCount = _modelSetting->GetEyeBlinkParameterCount();
+//        for (csmInt32 i = 0; i < eyeBlinkIdCount; ++i)
+//        {
+//            _eyeBlinkIds.PushBack(_modelSetting->GetEyeBlinkParameterId(i));
+//        }
     }
 
     // LipSyncIds
@@ -384,7 +384,7 @@ void LAppModel::PreloadMotionGroup(const csmChar *group)
         {
             tmpMotion->SetFadeOutTime(fadeTime);
         }
-        tmpMotion->SetEffectIds(_eyeBlinkIds, _lipSyncIds);
+        //tmpMotion->SetEffectIds(_eyeBlinkIds, _lipSyncIds);
 
         if (_motions[name] != NULL)
         {
@@ -472,7 +472,7 @@ void LAppModel::Update()
         if (_eyeBlink != NULL)
         {
             // メインモーションの更新がないとき
-            _eyeBlink->UpdateParameters(_model, deltaTimeSeconds); // 目パチ
+            //_eyeBlink->UpdateParameters(_model, deltaTimeSeconds); // 目パチ
         }
     }
 
@@ -614,7 +614,7 @@ CubismMotionQueueEntryHandle LAppModel::StartMotion(const csmChar *group, csmInt
         {
             motion->SetFadeOutTime(fadeTime);
         }
-        motion->SetEffectIds(_eyeBlinkIds, _lipSyncIds);
+        //motion->SetEffectIds(_eyeBlinkIds, _lipSyncIds);
         autoDelete = true; // 終了時にメモリから削除
 
         DeleteBuffer(buffer, path.GetRawString());

@@ -191,18 +191,16 @@ public class JniBridgeJava {
     static boolean up = true;
 
     public static void onUpdate(){
-        JniBridgeJava.nativeSetParamValue("PARAM_ANGLE_X".getBytes(StandardCharsets.UTF_8), TrackSave.x);
-        JniBridgeJava.nativeSetParamValue("PARAM_ANGLE_Y".getBytes(StandardCharsets.UTF_8), TrackSave.y);
-        JniBridgeJava.nativeSetParamValue("PARAM_ANGLE_Z".getBytes(StandardCharsets.UTF_8), TrackSave.z);
-        JniBridgeJava.nativeSetParamValue("PARAM_EYE_L_OPEN".getBytes(StandardCharsets.UTF_8), TrackSave.lo);
-        JniBridgeJava.nativeSetParamValue("PARAM_EYE_R_OPEN".getBytes(StandardCharsets.UTF_8), TrackSave.ro);
-        JniBridgeJava.nativeSetParamValue("PARAM_MOUTH_OPEN_Y".getBytes(StandardCharsets.UTF_8), TrackSave.mo);
-        JniBridgeJava.nativeSetParamValue("PARAM_EYE_BALL_X".getBytes(StandardCharsets.UTF_8), TrackSave.eyeX);
-        JniBridgeJava.nativeSetParamValue("PARAM_EYE_BALL_Y".getBytes(StandardCharsets.UTF_8), TrackSave.eyeY);
-        JniBridgeJava.nativeSetParamValue("PARAM_BODY_Z".getBytes(StandardCharsets.UTF_8), TrackSave.bX);
-        JniBridgeJava.nativeSetParamValue("PARAM_BODY_Y".getBytes(StandardCharsets.UTF_8), TrackSave.bY);
-        JniBridgeJava.nativeSetParamValue("PARAM_EYE_L_OPEN".getBytes(StandardCharsets.UTF_8), TrackSave.elO);
-        JniBridgeJava.nativeSetParamValue("PARAM_EYE_R_OPEN".getBytes(StandardCharsets.UTF_8), TrackSave.erO);
+        JniBridgeJava.nativeSetParamValue("PARAM_ANGLE_X".getBytes(StandardCharsets.UTF_8), TrackSave.AngleX);
+        JniBridgeJava.nativeSetParamValue("PARAM_ANGLE_Y".getBytes(StandardCharsets.UTF_8), TrackSave.AngleY);
+        JniBridgeJava.nativeSetParamValue("PARAM_ANGLE_Z".getBytes(StandardCharsets.UTF_8), TrackSave.AngleZ);
+        JniBridgeJava.nativeSetParamValue("PARAM_MOUTH_OPEN_Y".getBytes(StandardCharsets.UTF_8), TrackSave.MouthOpenY);
+        JniBridgeJava.nativeSetParamValue("PARAM_EYE_BALL_X".getBytes(StandardCharsets.UTF_8), TrackSave.EyeBallX);
+        JniBridgeJava.nativeSetParamValue("PARAM_EYE_BALL_Y".getBytes(StandardCharsets.UTF_8), TrackSave.EyeBallY);
+        JniBridgeJava.nativeSetParamValue("PARAM_BODY_Z".getBytes(StandardCharsets.UTF_8), TrackSave.BodyZ);
+        JniBridgeJava.nativeSetParamValue("PARAM_BODY_Y".getBytes(StandardCharsets.UTF_8), TrackSave.BodyY);
+        JniBridgeJava.nativeSetParamValue("PARAM_EYE_L_OPEN".getBytes(StandardCharsets.UTF_8), TrackSave.EyeLOpen);
+        JniBridgeJava.nativeSetParamValue("PARAM_EYE_R_OPEN".getBytes(StandardCharsets.UTF_8), TrackSave.EyeROpen);
     }
 
     public static void onLoadModel(String name) {
