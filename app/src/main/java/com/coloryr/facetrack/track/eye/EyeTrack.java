@@ -139,7 +139,7 @@ public class EyeTrack {
             mo = 0;
         }
         mo *= 20;
-        TrackSave.MouthOpenY = (float) mo;
+        TrackSave.MouthOpenY.add((float) mo);
 
         LandmarkProto.NormalizedLandmark p168 = list.getLandmark(168);
         LandmarkProto.NormalizedLandmark p8 = list.getLandmark(8);
@@ -166,7 +166,7 @@ public class EyeTrack {
             lo = 0;
         }
 
-        TrackSave.EyeLOpen = (float) lo - 1;
+        TrackSave.EyeLOpen.add((float) lo - 1);
         LandmarkProto.NormalizedLandmark p159 = list.getLandmark(159);
         LandmarkProto.NormalizedLandmark p158 = list.getLandmark(158);
         LandmarkProto.NormalizedLandmark p145 = list.getLandmark(145);
@@ -187,7 +187,7 @@ public class EyeTrack {
             ro = 0;
         }
 
-        TrackSave.EyeROpen = (float) ro - 1;
+        TrackSave.EyeROpen.add((float) ro - 1);
 
         LandmarkProto.NormalizedLandmark p474 = list.getLandmark(474);
         LandmarkProto.NormalizedLandmark p475 = list.getLandmark(475);
@@ -229,7 +229,7 @@ public class EyeTrack {
         } else {
             dx /= 2;
         }
-        TrackSave.EyeBallX = (float) -dx;
+        TrackSave.EyeBallX.add((float) -dx);
 
         double ex3 = (qx + qx1) / 2;
         double ey3 = (qy + qy1) / 2;
@@ -244,7 +244,7 @@ public class EyeTrack {
         dy *= 2;
         dy -= 1.5;
 
-        TrackSave.EyeBallY = (float) dy;
+        TrackSave.EyeBallY.add((float) dy);
     }
 
     private double dis(double x1, double y1, double x2, double y2) {
