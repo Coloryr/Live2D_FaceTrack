@@ -2,14 +2,12 @@ package com.coloryr.facetrack.track.eye;
 
 import android.content.Context;
 import android.graphics.*;
-import android.media.ExifInterface;
+import androidx.exifinterface.media.ExifInterface;
 import android.media.Image;
-import android.renderscript.Allocation;
-import android.renderscript.Element;
-import android.renderscript.RenderScript;
-import android.renderscript.ScriptIntrinsicYuvToRGB;
 import android.util.Log;
 import com.coloryr.facetrack.live2d.TrackSave;
+import com.google.android.renderscript.Toolkit;
+import com.google.android.renderscript.YuvFormat;
 import com.google.mediapipe.formats.proto.LandmarkProto;
 import com.google.mediapipe.solutions.facemesh.FaceMesh;
 import com.google.mediapipe.solutions.facemesh.FaceMeshOptions;
@@ -87,29 +85,10 @@ public class EyeTrack {
         return output;
     }
 
+
     public Bitmap getBitmapFromImage(Image image) {
-        final ByteBuffer yuvBytes = imageToByteBuffer(image);
-        // Convert YUV to RGB
-        final RenderScript rs = RenderScript.create(this.context);
-
-        final Bitmap bitmap = Bitmap.createBitmap(image.getWidth(), image.getHeight(), Bitmap.Config.ARGB_8888);
-        final Allocation allocationRgb = Allocation.createFromBitmap(rs, bitmap);
-
-        final Allocation allocationYuv = Allocation.createSized(rs, Element.U8(rs), yuvBytes.array().length);
-        allocationYuv.copyFrom(yuvBytes.array());
-
-        ScriptIntrinsicYuvToRGB scriptYuvToRgb = ScriptIntrinsicYuvToRGB.create(rs, Element.U8_4(rs));
-        scriptYuvToRgb.setInput(allocationYuv);
-        scriptYuvToRgb.forEach(allocationRgb);
-
-        allocationRgb.copyTo(bitmap);
-
-        // Release
-        allocationYuv.destroy();
-        allocationRgb.destroy();
-        rs.destroy();
-
-        return bitmap;
+        ByteBuffer yuvBytes = imageToByteBuffer(image);
+        return Toolkit.INSTANCE.yuvToRgbBitmap(yuvBytes.array(), image.getWidth(), image.getHeight(), YuvFormat.NV21);
     }
 
     public void init() {
@@ -121,7 +100,6 @@ public class EyeTrack {
                         .build());
         facemesh.setErrorListener((message, e) -> Log.e(TAG, "MediaPipe Face Mesh error:" + message));
 
-        //glSurfaceView.setRenderInputImage(true);
         facemesh.setResultListener(this::run);
     }
 
@@ -141,53 +119,53 @@ public class EyeTrack {
         mo *= 20;
         TrackSave.MouthOpenY.add((float) mo);
 
-        LandmarkProto.NormalizedLandmark p168 = list.getLandmark(168);
-        LandmarkProto.NormalizedLandmark p8 = list.getLandmark(8);
-
-        double s = dis(p168.getX(), p168.getY(), p8.getX(), p8.getY());
-
         LandmarkProto.NormalizedLandmark p385 = list.getLandmark(385);
         LandmarkProto.NormalizedLandmark p386 = list.getLandmark(386);
         LandmarkProto.NormalizedLandmark p374 = list.getLandmark(374);
+        LandmarkProto.NormalizedLandmark p373 = list.getLandmark(373);
 
         double qx = (p385.getX() + p386.getX()) / 2;
         double qy = (p385.getY() + p386.getY()) / 2;
 
         double lo1 = dis(qx, qy, p374.getX(), p374.getY());
-        double lo = lo1 / s;
-        lo -= 0.28;
-        lo /= 0.5;
-        if(lo > 0.8)
-        {
-            lo = 1;
-        }
-        else if(lo < 0.1)
-        {
-            lo = 0;
-        }
+        double lo2 = dis(p373.getX(), p373.getY(), p374.getX(), p374.getY());
+        double lo = lo1 / lo2;
+//        lo -= 0.28;
+//        lo /= 0.5;
+//        if(lo > 0.8)
+//        {
+//            lo = 1;
+//        }
+//        else if(lo < 0.1)
+//        {
+//            lo = 0;
+//        }
 
-        TrackSave.EyeLOpen.add((float) lo - 1);
+        TrackSave.EyeLOpen = (float) lo - 1;
+
         LandmarkProto.NormalizedLandmark p159 = list.getLandmark(159);
         LandmarkProto.NormalizedLandmark p158 = list.getLandmark(158);
         LandmarkProto.NormalizedLandmark p145 = list.getLandmark(145);
+        LandmarkProto.NormalizedLandmark p153 = list.getLandmark(153);
 
         double qx1 = (p159.getX() + p158.getX()) / 2;
         double qy1 = (p159.getY() + p158.getY()) / 2;
 
         double ro1 = dis(qx1, qy1, p145.getX(), p145.getY());
-        double ro = ro1 / s;
-        ro -= 0.23;
-        ro /= 0.5;
-        if(ro > 0.8)
-        {
-            ro = 1;
-        }
-        if(ro < 0.1)
-        {
-            ro = 0;
-        }
+        double ro2 = dis(p153.getX(), p153.getY(), p145.getX(), p145.getY());
+        double ro = ro1 / ro2;
+//        ro -= 0.23;
+//        ro /= 0.5;
+//        if(ro > 0.8)
+//        {
+//            ro = 1;
+//        }
+//        if(ro < 0.1)
+//        {
+//            ro = 0;
+//        }
 
-        TrackSave.EyeROpen.add((float) ro - 1);
+        TrackSave.EyeROpen  = (float) ro - 1;
 
         LandmarkProto.NormalizedLandmark p474 = list.getLandmark(474);
         LandmarkProto.NormalizedLandmark p475 = list.getLandmark(475);
@@ -273,6 +251,7 @@ public class EyeTrack {
 
     public void onCameraFrame(Image image) {
         Bitmap bitmap = getBitmapFromImage(image);
+
         bitmap = rotateBitmap(bitmap, ExifInterface.ORIENTATION_ROTATE_270);
 
         facemesh.send(bitmap);

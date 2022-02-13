@@ -1,4 +1,6 @@
 include ':Live2DFaceTrack'
 project(':Live2DFaceTrack').projectDir = new File(settingsDir, 'app')
 
+include ':renderscript-toolkit'
+
 
