@@ -4,35 +4,35 @@ public class TrackSave {
     /*
     -30 30
      */
-    public static final ArgF AngleY = new ArgF(2);
+    public static float AngleY = 0f;
     /*
     -60 60
      */
-    public static final ArgF AngleX = new ArgF(2);
+    public static float AngleX = 0f;
     /*
     -30 30
      */
-    public static final ArgF AngleZ = new ArgF(2);
+    public static float AngleZ = 0f;
     /*
     0 2
      */
-    public static final ArgF MouthOpenY = new ArgF(2);
+    public static float MouthOpenY = 0f;
     /*
     -1 1
      */
-    public static final ArgF EyeBallX = new ArgF(2);
+    public static float EyeBallX = 0f;
     /*
     -1 1
      */
-    public static final ArgF EyeBallY = new ArgF(2);
+    public static float EyeBallY = 0f;
     /*
     -1 1
      */
-    public static final ArgF BodyZ = new ArgF(2);
+    public static float BodyZ = 0f;
     /*
    -1 1
     */
-    public static final ArgF BodyY = new ArgF(2);
+    public static float BodyY = 0f;
     /*
     -1 0
      */

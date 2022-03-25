@@ -530,6 +530,14 @@ public:
      */
     void    SaveParameters();
 
+    csmVector<CubismIdHandle> GetPartIds() {
+        return _partIds;
+    }
+
+    csmFloat32* GetPartValues() {
+        return _partOpacities;
+    }
+
     Core::csmModel*     GetModel() const;
 
     csmVector<CubismIdHandle> GetParameterIds(){return _parameterIds;}

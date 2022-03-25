@@ -13,6 +13,7 @@ import android.widget.RelativeLayout;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import com.coloryr.facetrack.live2d.CubismParam;
+import com.coloryr.facetrack.live2d.CubismPart;
 import com.coloryr.facetrack.live2d.JniBridgeJava;
 
 public class GLFragment extends Fragment {
@@ -117,6 +118,11 @@ public class GLFragment extends Fragment {
             if(list == null)
             {
                 Log.i("mian", "get fail");
+            }
+            CubismPart[] list1 = JniBridgeJava.getCubismParts();
+            if(list1 == null)
+            {
+                Log.i("mian", "get part fail");
             }
         });
 

@@ -90,6 +90,10 @@ public class JniBridgeJava {
 
     public static native String[] nativeGetParamIds();
 
+    public static native float[] nativeGetPartValues();
+
+    public static native String[] nativeGetPartIds();
+
     public static native float[] nativeGetParamValues();
 
     public static native float[] nativeGetParamDefaultValues();
@@ -191,14 +195,14 @@ public class JniBridgeJava {
     static boolean up = true;
 
     public static void onUpdate(){
-        JniBridgeJava.nativeSetParamValue("PARAM_ANGLE_X".getBytes(StandardCharsets.UTF_8), TrackSave.AngleX.get());
-        JniBridgeJava.nativeSetParamValue("PARAM_ANGLE_Y".getBytes(StandardCharsets.UTF_8), TrackSave.AngleY.get());
-        JniBridgeJava.nativeSetParamValue("PARAM_ANGLE_Z".getBytes(StandardCharsets.UTF_8), TrackSave.AngleZ.get());
-        JniBridgeJava.nativeSetParamValue("PARAM_MOUTH_OPEN_Y".getBytes(StandardCharsets.UTF_8), TrackSave.MouthOpenY.get());
-        JniBridgeJava.nativeSetParamValue("PARAM_EYE_BALL_X".getBytes(StandardCharsets.UTF_8), TrackSave.EyeBallX.get());
-        JniBridgeJava.nativeSetParamValue("PARAM_EYE_BALL_Y".getBytes(StandardCharsets.UTF_8), TrackSave.EyeBallY.get());
-        JniBridgeJava.nativeSetParamValue("PARAM_BODY_Z".getBytes(StandardCharsets.UTF_8), TrackSave.BodyZ.get());
-        JniBridgeJava.nativeSetParamValue("PARAM_BODY_Y".getBytes(StandardCharsets.UTF_8), TrackSave.BodyY.get());
+        JniBridgeJava.nativeSetParamValue("PARAM_ANGLE_X".getBytes(StandardCharsets.UTF_8), TrackSave.AngleX);
+        JniBridgeJava.nativeSetParamValue("PARAM_ANGLE_Y".getBytes(StandardCharsets.UTF_8), TrackSave.AngleY);
+        JniBridgeJava.nativeSetParamValue("PARAM_ANGLE_Z".getBytes(StandardCharsets.UTF_8), TrackSave.AngleZ);
+        JniBridgeJava.nativeSetParamValue("PARAM_MOUTH_OPEN_Y".getBytes(StandardCharsets.UTF_8), TrackSave.MouthOpenY);
+        JniBridgeJava.nativeSetParamValue("PARAM_EYE_BALL_X".getBytes(StandardCharsets.UTF_8), TrackSave.EyeBallX);
+        JniBridgeJava.nativeSetParamValue("PARAM_EYE_BALL_Y".getBytes(StandardCharsets.UTF_8), TrackSave.EyeBallY);
+        JniBridgeJava.nativeSetParamValue("PARAM_BODY_Z".getBytes(StandardCharsets.UTF_8), TrackSave.BodyZ);
+        JniBridgeJava.nativeSetParamValue("PARAM_BODY_Y".getBytes(StandardCharsets.UTF_8), TrackSave.BodyY);
         JniBridgeJava.nativeSetParamValue("PARAM_EYE_L_OPEN".getBytes(StandardCharsets.UTF_8), TrackSave.EyeLOpen);
         JniBridgeJava.nativeSetParamValue("PARAM_EYE_R_OPEN".getBytes(StandardCharsets.UTF_8), TrackSave.EyeROpen);
     }
@@ -210,6 +214,23 @@ public class JniBridgeJava {
         } else {
             JniBridgeJava.nativeEnableRandomMotion(true);
         }
+    }
+
+    public static CubismPart[] getCubismParts() {
+        String[] list = JniBridgeJava.nativeGetPartIds();
+        if (list == null) {
+            return null;
+        }
+
+        CubismPart[] list1 = new CubismPart[list.length];
+        float[] values = nativeGetPartValues();
+
+        for (int a = 0; a < list.length; a++) {
+            list1[a] = new CubismPart();
+            list1[a].id = list[a];
+            list1[a].opacities = values[a];
+        }
+        return list1;
     }
 
     public static CubismParam[] getCubismParams() {

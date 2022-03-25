@@ -134,6 +134,9 @@ public:
     const Csm::csmFloat32* GetParameterDefaultValues();
     Csm::csmInt32 GetParameterCount();
     void SetParamValue(Csm::csmString id, Csm::csmFloat32 value);
+    Csm::csmVector<Live2D::Cubism::Framework::CubismIdHandle> GetPartIds();
+    Csm::csmFloat32* GetPartValues();
+    Csm::csmInt32 GetPartCount();
 
 protected:
     /**

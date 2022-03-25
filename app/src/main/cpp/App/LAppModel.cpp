@@ -78,6 +78,36 @@ LAppModel::~LAppModel()
     delete _modelSetting;
 }
 
+csmFloat32 *LAppModel::GetPartValues()
+{
+    if (this->_model == NULL)
+    {
+        return NULL;
+    }
+
+    return this->_model->GetPartValues();
+}
+
+csmInt32 LAppModel::GetPartCount()
+{
+    if (this->_model == NULL)
+    {
+        return -1;
+    }
+
+    return this->_model->GetPartCount();
+}
+
+Csm::csmVector<Live2D::Cubism::Framework::CubismIdHandle> LAppModel::GetPartIds()
+{
+    if (this->_model == NULL)
+    {
+        return NULL;
+    }
+
+    return this->_model->GetPartIds();
+}
+
 csmInt32 LAppModel::GetParameterCount()
 {
     if (this->_model == NULL)

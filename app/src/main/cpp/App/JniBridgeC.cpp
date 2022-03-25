@@ -110,6 +110,50 @@ Csm::csmString ToString(JNIEnv *env, jbyteArray data)
 
 extern "C"
 {
+    JNIEXPORT jfloatArray JNICALL
+    class_name(GetPartValues)(JNIEnv *env, jclass type)
+    {
+        LAppLive2DManager *l2d = LAppLive2DManager::GetInstance();
+        LAppModel *model = l2d->GetModel();
+        if (model)
+        {
+            const csmFloat32 *list = model->GetPartValues();
+            if (list == NULL)
+                return NULL;
+
+            csmInt32 size = model->GetPartCount();
+
+            jfloatArray ret = (jfloatArray)env->NewFloatArray(size);
+
+            env->SetFloatArrayRegion(ret, 0, size, list);
+
+            return ret;
+        }
+
+        return NULL;
+    }
+
+    JNIEXPORT jobjectArray JNICALL
+    class_name(GetPartIds)(JNIEnv *env, jclass type)
+    {
+        LAppLive2DManager *l2d = LAppLive2DManager::GetInstance();
+        LAppModel *model = l2d->GetModel();
+        if (model)
+        {
+            Csm::csmVector<Live2D::Cubism::Framework::CubismIdHandle> list = model->GetPartIds();
+            jobjectArray ret = (jobjectArray)env->NewObjectArray(list.GetSize(), env->FindClass("java/lang/String"), env->NewStringUTF(""));
+
+            for (int i = 0; i < list.GetSize(); i++)
+            {
+                env->SetObjectArrayElement(ret, i, env->NewStringUTF(list[i]->GetString().GetRawString()));
+            }
+
+            return ret;
+        }
+
+        return NULL;
+    }
+
     JNIEXPORT void JNICALL
     class_name(SetParamValue)(JNIEnv *env, jclass type, jbyteArray id, jfloat value)
     {
