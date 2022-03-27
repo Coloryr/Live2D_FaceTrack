@@ -1,5 +1,6 @@
 package com.coloryr.facetrack;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -10,11 +11,17 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import com.coloryr.facetrack.live2d.CubismParam;
 import com.coloryr.facetrack.live2d.CubismPart;
+import com.coloryr.facetrack.live2d.GLRenderer;
 import com.coloryr.facetrack.live2d.JniBridgeJava;
+
+import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class GLFragment extends Fragment {
 
@@ -27,10 +34,15 @@ public class GLFragment extends Fragment {
     private EditText y;
     private EditText s;
 
+    @SuppressLint("StaticFieldLeak")
+    private static TextView fps;
+
     private int mos;
     private int exs;
 
     public static CubismParam[] list;
+
+    private static final Timer timer =new Timer();
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -40,6 +52,15 @@ public class GLFragment extends Fragment {
         button = root.findViewById(R.id.show_button);
         button1 = root.findViewById(R.id.button_floating);
         button2 = root.findViewById(R.id.button_load);
+        fps = root.findViewById(R.id.fps);
+
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                int fps = GLRenderer.getFps();
+                MainActivity.run(() -> GLFragment.fps.setText(String.valueOf(fps)));
+            }
+        },  0, 1000);
 
         x = root.findViewById(R.id.x);
         y = root.findViewById(R.id.y);

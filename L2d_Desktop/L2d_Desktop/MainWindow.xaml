@@ -1,0 +1,55 @@
+﻿<Window x:Class="L2d_Desktop.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:L2d_Desktop"
+        mc:Ignorable="d"
+        Title="Live2d_FaceTrack电脑端" Height="450" Width="800" Loaded="Window_Loaded" ResizeMode="CanMinimize">
+    <Grid>
+        <Rectangle Fill="#FFF4F4F5" Stroke="#FF5ABED6" StrokeThickness="2"/>
+        <GroupBox Header="选择连接手机" Margin="10,10,0,0" Height="258" VerticalAlignment="Top" HorizontalAlignment="Left" Width="254">
+            <Grid>
+                <ListView Margin="10,10,0,0" Name="DeviceList" Height="185" VerticalAlignment="Top" HorizontalAlignment="Left" Width="230">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Name" Width="100" DisplayMemberBinding="{Binding Name}"/>
+                            <GridViewColumn Header="Serial" Width="120" DisplayMemberBinding="{Binding Serial}"/>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+                <Button Content="刷新" HorizontalAlignment="Left" Margin="10,200,0,0" VerticalAlignment="Top" Width="70" Height="20" Click="Button_Click" Name="Res_Button"/>
+                <Button Content="链接" HorizontalAlignment="Left" Margin="171,200,0,0" VerticalAlignment="Top" Width="70" Height="20" Click="Button_Click_1" Name="Conn_Button"/>
+            </Grid>
+        </GroupBox>
+        <GroupBox HorizontalAlignment="Left" Height="120" Header="链接设置" Margin="10,273,0,0" VerticalAlignment="Top" Width="254" Name="Group_Setting">
+            <Grid>
+                <Label Content="链接端口" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
+                <TextBox HorizontalAlignment="Left" Margin="68,14,0,0" TextWrapping="Wrap" Text="{Binding Port}" VerticalAlignment="Top" Width="172" Height="18"/>
+
+            </Grid>
+        </GroupBox>
+        <GroupBox HorizontalAlignment="Left" Height="118" Header="模型信息" Margin="269,10,0,0" VerticalAlignment="Top" Width="254" Name="Group_Model" IsEnabled="False">
+            <Grid>
+                <Label Content="是否加载" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
+                <TextBox HorizontalAlignment="Left" Margin="68,14,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="172" Height="18" Name="ModelLoad" IsReadOnly="True"/>
+                <Label Content="模型名字" HorizontalAlignment="Left" Margin="10,35,0,0" VerticalAlignment="Top"/>
+                <TextBox HorizontalAlignment="Left" Margin="68,39,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="172" Height="18" Name="ModelName" IsReadOnly="True"/>
+                <Button Content="刷新" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="13,66,0,0" Width="60" Height="20" Click="Button_Click_2"/>
+            </Grid>
+        </GroupBox>
+        <GroupBox HorizontalAlignment="Left" Height="118" Header="虚拟摄像头" Margin="528,10,0,0" VerticalAlignment="Top" Width="254">
+            <Grid>
+                <Button Content="安装" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0" Width="60" Height="20" Click="Button_Click_3"/>
+                <Button Content="卸载" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="75,10,0,0" Width="60" Height="20" Click="Button_Click_4"/>
+                <Label Content="宽" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center"/>
+                <TextBox HorizontalAlignment="Left" Margin="32,0,0,0" TextWrapping="Wrap" Text="{Binding C_Width}" VerticalAlignment="Center" Width="77" Height="18"/>
+                <Label Content="高" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <TextBox HorizontalAlignment="Left" Margin="136,0,0,0" TextWrapping="Wrap" Text="{Binding C_Height}" VerticalAlignment="Center" Width="77" Height="18"/>
+                <Button Content="设置" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,59,0,0" Width="60" Height="20" Click="Button_Click_5"/>
+            </Grid>
+        </GroupBox>
+        <Image HorizontalAlignment="Left" Height="200" Margin="269,133,0,0" VerticalAlignment="Top" Width="200" Name="ShowImg" Stretch="UniformToFill"/>
+
+    </Grid>
+</Window>

@@ -2,9 +2,15 @@ package com.coloryr.facetrack;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.util.Log;
+import android.os.Handler;
+import android.os.Looper;
 import android.widget.ImageView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -13,6 +19,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+import com.coloryr.facetrack.socket.ServiceBroadcastReceiver;
 import com.coloryr.facetrack.track.eye.EyeTrack;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.coloryr.facetrack.track.arcore.ArTest;
@@ -38,13 +45,40 @@ public class MainActivity extends AppCompatActivity {
     public static ImageView imageView;
 
     private final String[] permissions = new String[]{
-            Manifest.permission.CAMERA
+            Manifest.permission.CAMERA,
+            Manifest.permission.INTERNET
     };
+
+    private final Handler mainHandler = new Handler(Looper.getMainLooper());
+    private final ServiceBroadcastReceiver receiver = new ServiceBroadcastReceiver();
+
+    private NotificationManager mNManager;
+
+    public static void makeNotification(String title, String text, String ticker){
+        @SuppressLint("UnspecifiedImmutableFlag") PendingIntent pendingIntent = PendingIntent.getActivity(app.getApplicationContext(),
+                1, app.getIntent(), PendingIntent.FLAG_CANCEL_CURRENT);
+        Notification.Builder mBuilder = new Notification.Builder(app.getApplicationContext(),
+                "Live2DFaceTrack");
+        mBuilder.setContentTitle(title)
+                .setContentText(text)
+                .setTicker(ticker)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true);
+        Notification b = mBuilder.build();
+        app.mNManager.notify(1, b);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         isPermission();
+
+        mNManager = (NotificationManager) this.getApplicationContext().getSystemService(NOTIFICATION_SERVICE);
+        NotificationChannel channel = new NotificationChannel("Live2DFaceTrack", "Live2DFaceTrack", NotificationManager.IMPORTANCE_DEFAULT);
+        channel.setDescription("Live2DFaceTrack");
+        mNManager.createNotificationChannel(channel);
+
         app = this;
         glView = new GLView(getBaseContext());
         setContentView(R.layout.activity_main);
@@ -60,6 +94,11 @@ public class MainActivity extends AppCompatActivity {
 
         eye = new EyeTrack(this);
         ar = new ArTest(this);
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(ServiceBroadcastReceiver.START_ACTION);
+//        filter.addAction(ServiceBroadcastReceiver.STOP_ACTION);
+        registerReceiver(receiver, filter);
     }
 
     private void isPermission() {
@@ -74,6 +113,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public static void run(Runnable runnable){
+        app.mainHandler.post(runnable);
+    }
 
     @Override
     public void onResume() {

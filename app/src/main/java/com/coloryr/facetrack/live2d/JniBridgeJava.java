@@ -106,8 +106,18 @@ public class JniBridgeJava {
 
     // Java -----------------------------------------------------------------
 
+    private static boolean isLoad;
+    private static String name;
     private static final List<String> motions = new ArrayList<>();
     private static final List<String> expressions = new ArrayList<>();
+
+    public static boolean isLoad() {
+        return isLoad;
+    }
+
+    public static String getName() {
+        return name;
+    }
 
     private static void resData() {
         int a = nativeGetMotionSize();
@@ -189,10 +199,8 @@ public class JniBridgeJava {
         byte[] path1 = path.getBytes(StandardCharsets.UTF_8);
         byte[] name1 = name.getBytes(StandardCharsets.UTF_8);
         nativeLoadModel(path1, name1);
+        isLoad = true;
     }
-
-    static float a = -30;
-    static boolean up = true;
 
     public static void onUpdate(){
         JniBridgeJava.nativeSetParamValue("PARAM_ANGLE_X".getBytes(StandardCharsets.UTF_8), TrackSave.AngleX);
@@ -208,6 +216,7 @@ public class JniBridgeJava {
     }
 
     public static void onLoadModel(String name) {
+        JniBridgeJava.name = name;
         if (name.equals("shizuku.model3.json")) {
             JniBridgeJava.nativeSetBreath("PARAM_BREATH".getBytes(StandardCharsets.UTF_8));
             JniBridgeJava.nativeEnableRandomMotion(false);
