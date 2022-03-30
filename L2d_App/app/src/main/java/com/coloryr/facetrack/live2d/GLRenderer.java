@@ -7,9 +7,6 @@
 
 package com.coloryr.facetrack.live2d;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.media.ImageReader;
 import android.opengl.GLES30;
 import android.opengl.GLSurfaceView;
 import android.util.Log;
@@ -21,8 +18,8 @@ import javax.microedition.khronos.opengles.GL10;
 import java.nio.*;
 
 public class GLRenderer implements GLSurfaceView.Renderer {
-    private int width;
-    private int height;
+    private final int width = 540;
+    private final int height = 600;
     private ByteBuffer data;
 
     private static int fps;
@@ -41,13 +38,9 @@ public class GLRenderer implements GLSurfaceView.Renderer {
 
     @Override
     public void onSurfaceChanged(GL10 gl, int width, int height) {
-        height = height/2;
-        width = width/2;
-        this.height = height;
-        this.width = width;
-        JniBridgeJava.nativeOnSurfaceChanged(width, height);
-        MainActivity.ar.onSurfaceChanged(width, height);
-        data = ByteBuffer.allocateDirect(width * height * 4).order(ByteOrder.nativeOrder());
+        JniBridgeJava.nativeOnSurfaceChanged(this.width, this.height);
+        MainActivity.ar.onSurfaceChanged(this.width, this.height);
+        data = ByteBuffer.allocateDirect(this.width * this.height * 4).order(ByteOrder.nativeOrder());
     }
 
     @Override
