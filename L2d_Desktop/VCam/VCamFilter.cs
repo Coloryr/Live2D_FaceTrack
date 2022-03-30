@@ -366,24 +366,10 @@ namespace VCam
                 point = new Point();
                 SetBrushOrgEx(m_hCursor, 0, 0, ref point);
 
-                //if (mm.haveData)
-                //{
-                //    var ptr1 = Marshal.UnsafeAddrOfPinnedArrayElement(mm.temp, 0);
-
-                //    IntPtr hbitmap = SelectObject(m_hCursor, m_hBitmap1);
-                //    SetDIBits(m_hCursor, m_hBitmap1, 0, (uint)Math.Abs(m_nHeight), ptr1, ref m_bmi, 0);
-                //}
-
-                if (temp_data == null)
+                if (mm.haveData)
                 {
-                    temp_data = File.ReadAllBytes("H:/test.data");
-                }
-                var ptr1 = Marshal.UnsafeAddrOfPinnedArrayElement(temp_data, 0);
-
-                int res = SetDIBits(m_hCursor, m_hBitmap1, 0, (uint)Math.Abs(pic_height), ptr1, ref m_bmi1, 0);
-                if (res == 0)
-                {
-                    MessageBox.Show("set error");
+                    var ptr1 = Marshal.UnsafeAddrOfPinnedArrayElement(mm.temp, 0);
+                    SetDIBits(m_hCursor, m_hBitmap1, 0, (uint)Math.Abs(pic_height), ptr1, ref m_bmi1, 0);
                 }
 
                 StretchBlt(m_hMemDC, 0, 0, m_nWidth, Math.Abs(m_nHeight), m_hCursor, 0, 0, pic_width, Math.Abs(pic_height), TernaryRasterOperations.SRCCOPY);
