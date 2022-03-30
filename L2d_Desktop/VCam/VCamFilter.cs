@@ -3,6 +3,7 @@ using DirectShow.BaseClasses;
 using Sonic;
 using System;
 using System.Drawing;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
@@ -15,8 +16,8 @@ namespace VCam
     {
         #region Constants
 
-        private static int c_iDefaultWidth = 1024;
-        private static int c_iDefaultHeight = 756;
+        private static int c_iDefaultWidth = 540;
+        private static int c_iDefaultHeight = 600;
         private const int c_nDefaultBitCount = 32;
         private const int c_iDefaultFPS = 20;
         private const int c_iFormatsCount = 8;
@@ -35,6 +36,10 @@ namespace VCam
 
         protected int m_nWidth = c_iDefaultWidth;
         protected int m_nHeight = c_iDefaultHeight;
+
+        private int pic_width = c_iDefaultWidth;
+        private int pic_height = c_iDefaultHeight;
+
         protected int m_nBitCount = c_nDefaultBitCount;
         protected long m_nAvgTimePerFrame = UNITS / c_iDefaultFPS;
 
@@ -43,7 +48,9 @@ namespace VCam
         protected IntPtr m_hCursor = IntPtr.Zero;
 
         protected IntPtr m_hBitmap = IntPtr.Zero;
+        protected IntPtr m_hBitmap1 = IntPtr.Zero;
         protected BitmapInfo m_bmi = new BitmapInfo();
+        protected BitmapInfo m_bmi1 = new BitmapInfo();
 
         protected int m_nMaxWidth = 0;
         protected int m_nMaxHeight = 0;
@@ -57,16 +64,34 @@ namespace VCam
         public VCamFilter()
             : base("Live2D FaceTrack Camera")
         {
-            m_bmi.bmiHeader = new BitmapInfoHeader();
-            AddPin(new VCamStream("Capture", this));
             mm = new MMFile(this);
             mm.Tick();
+            m_bmi.bmiHeader = new BitmapInfoHeader();
+            m_bmi1.bmiHeader = new BitmapInfoHeader();
+
+            m_bmi1.bmiHeader.BitCount = 32;
+            m_bmi1.bmiHeader.Height = pic_height;
+            m_bmi1.bmiHeader.Width = pic_width;
+            m_bmi1.bmiHeader.Compression = BI_RGB;
+            m_bmi1.bmiHeader.Planes = 1;
+            m_bmi1.bmiHeader.ImageSize = ALIGN16(m_bmi.bmiHeader.Width) * ALIGN16(Math.Abs(m_bmi1.bmiHeader.Height)) * m_bmi1.bmiHeader.BitCount / 8;
+
+            AddPin(new VCamStream("Capture", this));
         }
 
-        public void Set(ushort height, ushort width) 
+        public void Set(ushort width, ushort height)
         {
-            c_iDefaultWidth = m_nWidth = width;
-            c_iDefaultHeight = m_nHeight = height;
+            if (pic_width != width && pic_height != height)
+            {
+                pic_width = width;
+                pic_height = height;
+
+                m_bmi1.bmiHeader.Height = pic_height;
+                m_bmi1.bmiHeader.Width = pic_width;
+                m_bmi1.bmiHeader.ImageSize = ALIGN16(m_bmi1.bmiHeader.Width) * ALIGN16(Math.Abs(m_bmi1.bmiHeader.Height)) * m_bmi1.bmiHeader.BitCount / 8;
+
+                MessageBox.Show("set width:" + width + " height:" + height);
+            }
         }
 
         #endregion
@@ -86,9 +111,9 @@ namespace VCam
                 m_nMaxWidth = GetDeviceCaps(m_hScreenDC, 8); // HORZRES
                 m_nMaxHeight = GetDeviceCaps(m_hScreenDC, 10); // VERTRES
                 m_hMemDC = CreateCompatibleDC(m_hScreenDC);
+                m_hCursor = CreateCompatibleDC(m_hScreenDC);
                 m_hBitmap = CreateCompatibleBitmap(m_hScreenDC, m_nWidth, Math.Abs(m_nHeight));
-                m_hCursor = LoadCursor(IntPtr.Zero, 32512);
-
+                m_hBitmap1 = CreateCompatibleBitmap(m_hScreenDC, pic_width, Math.Abs(pic_height));
             }
             return base.Pause();
         }
@@ -101,10 +126,20 @@ namespace VCam
                 DeleteObject(m_hBitmap);
                 m_hBitmap = IntPtr.Zero;
             }
+            if (m_hBitmap1 != IntPtr.Zero)
+            {
+                DeleteObject(m_hBitmap1);
+                m_hBitmap1 = IntPtr.Zero;
+            }
             if (m_hScreenDC != IntPtr.Zero)
             {
                 DeleteDC(m_hScreenDC);
                 m_hScreenDC = IntPtr.Zero;
+            }
+            if (m_hCursor != IntPtr.Zero)
+            {
+                DeleteDC(m_hCursor);
+                m_hCursor = IntPtr.Zero;
             }
             if (m_hMemDC != IntPtr.Zero)
             {
@@ -186,6 +221,11 @@ namespace VCam
                 {
                     DeleteObject(m_hBitmap);
                     m_hBitmap = IntPtr.Zero;
+                }
+                if (m_hBitmap1 != IntPtr.Zero)
+                {
+                    DeleteObject(m_hBitmap1);
+                    m_hBitmap1 = IntPtr.Zero;
                 }
                 BitmapInfoHeader _bmi = pmt;
                 m_bmi.bmiHeader.BitCount = _bmi.BitCount;
@@ -295,46 +335,71 @@ namespace VCam
             return hr;
         }
 
+        private byte[] temp_data;
+
         public int FillBuffer(ref IMediaSampleImpl _sample)
         {
-            mm.Tick();
-            if (m_hBitmap == IntPtr.Zero)
+            try
             {
-                m_hBitmap = CreateCompatibleBitmap(m_hScreenDC, m_nWidth, Math.Abs(m_nHeight));
-            }
-
-            if (mm.haveData)
-            { 
-                
-            }
-
-            IntPtr _ptr;
-            _sample.GetPointer(out _ptr);
-            IntPtr hOldBitmap = SelectObject(m_hMemDC, m_hBitmap);
-
-            //避免失真
-            SetStretchBltMode(m_hMemDC, 4);
-            Point point = new Point();
-            SetBrushOrgEx(m_hMemDC, 0, 0, ref point);
-            unsafe
-            {
-                if (mm.haveData)
+                mm.Tick();
+                if (m_hBitmap == IntPtr.Zero)
                 {
-                    byte* p = (byte*)_ptr.ToPointer();
-                    for (int i = 0; i < _sample.GetSize(); i++)
-                    {
-                        p[i] = mm.temp[i];
-                    }
+                    m_hBitmap = CreateCompatibleBitmap(m_hScreenDC, m_nWidth, Math.Abs(m_nHeight));
                 }
-            }
 
-            SelectObject(m_hMemDC, hOldBitmap);
-            GetDIBits(m_hMemDC, m_hBitmap, 0, (uint)Math.Abs(m_nHeight), _ptr, ref m_bmi, 0);
-            _sample.SetActualDataLength(_sample.GetSize());
-            _sample.SetSyncPoint(true);
+                if (m_hBitmap1 == IntPtr.Zero)
+                {
+                    m_hBitmap1 = CreateCompatibleBitmap(m_hScreenDC, pic_width, pic_height);
+                }
+
+                IntPtr _ptr;
+                _sample.GetPointer(out _ptr);
+                IntPtr hOldBitmap = SelectObject(m_hMemDC, m_hBitmap);
+                IntPtr hbitmap = SelectObject(m_hCursor, m_hBitmap1);
+
+                //避免失真
+                SetStretchBltMode(m_hMemDC, 4);
+                Point point = new Point();
+                SetBrushOrgEx(m_hMemDC, 0, 0, ref point);
+
+                SetStretchBltMode(m_hCursor, 4);
+                point = new Point();
+                SetBrushOrgEx(m_hCursor, 0, 0, ref point);
+
+                //if (mm.haveData)
+                //{
+                //    var ptr1 = Marshal.UnsafeAddrOfPinnedArrayElement(mm.temp, 0);
+
+                //    IntPtr hbitmap = SelectObject(m_hCursor, m_hBitmap1);
+                //    SetDIBits(m_hCursor, m_hBitmap1, 0, (uint)Math.Abs(m_nHeight), ptr1, ref m_bmi, 0);
+                //}
+
+                if (temp_data == null)
+                {
+                    temp_data = File.ReadAllBytes("H:/test.data");
+                }
+                var ptr1 = Marshal.UnsafeAddrOfPinnedArrayElement(temp_data, 0);
+
+                int res = SetDIBits(m_hCursor, m_hBitmap1, 0, (uint)Math.Abs(pic_height), ptr1, ref m_bmi1, 0);
+                if (res == 0)
+                {
+                    MessageBox.Show("set error");
+                }
+
+                StretchBlt(m_hMemDC, 0, 0, m_nWidth, Math.Abs(m_nHeight), m_hCursor, 0, 0, pic_width, Math.Abs(pic_height), TernaryRasterOperations.SRCCOPY);
+
+                SelectObject(m_hCursor, hbitmap);
+                SelectObject(m_hMemDC, hOldBitmap);
+                GetDIBits(m_hMemDC, m_hBitmap, 0, (uint)Math.Abs(m_nHeight), _ptr, ref m_bmi, 0);
+                _sample.SetActualDataLength(_sample.GetSize());
+                _sample.SetSyncPoint(true);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.ToString());
+            }
             return NOERROR;
         }
-
 
         public int GetLatency(out long prtLatency)
         {
@@ -529,6 +594,10 @@ namespace VCam
         [DllImport("gdi32.dll")]
         private static extern int GetDIBits(IntPtr hdc, IntPtr hbmp, uint uStartScan,
            uint cScanLines, [Out] IntPtr lpvBits, ref BitmapInfo lpbmi, uint uUsage);
+
+        [DllImport("gdi32.dll")]
+        private static extern int SetDIBits(IntPtr hdc, IntPtr hbmp, uint uStartScan,
+           uint cScanLines, [In] IntPtr lpvBits, ref BitmapInfo lpbmi, uint uUsage);
 
         [DllImport("gdi32.dll")]
         static extern int SetStretchBltMode(IntPtr hdc, int iStretchMode);

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace VCam
 {
@@ -33,39 +34,41 @@ namespace VCam
                     ushort height = reader.ReadUInt16();
 
                     cam.Set(width, height);
-
-                    stream.Seek(0, SeekOrigin.Begin);
-                    BinaryWriter writer = new BinaryWriter(stream);
-                    writer.Write(1);
                 }
                 stream.Dispose();
                 mmf.Dispose();
-                Thread.Sleep(100);
             }
-            catch
+            catch (FileNotFoundException e)
             {
 
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.ToString());
             }
 
             try
             {
-                var mmf = MemoryMappedFile.OpenExisting("Live2dFaceTrackImg");
+                var mmf = MemoryMappedFile.OpenExisting("Live2dFaceTrack");
                 MemoryMappedViewStream stream = mmf.CreateViewStream();
                 BinaryReader reader = new BinaryReader(stream);
-                int width = reader.ReadInt16();
-                int height = reader.ReadInt16();
-                int size = width + height + 4;
+                int width = reader.ReadInt32();
+                int height = reader.ReadInt32();
+                int size = width * height * 4;
                 if (temp == null || temp.Length != size)
                     temp = new byte[size];
                 reader.Read(temp, 0, temp.Length);
                 haveData = true;
                 stream.Dispose();
                 mmf.Dispose();
-                Thread.Sleep(100);
             }
-            catch
+            catch (FileNotFoundException e)
+            { 
+                
+            }
+            catch (Exception e)
             {
-
+                MessageBox.Show(e.ToString());
             }
         }
     }

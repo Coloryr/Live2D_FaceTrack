@@ -27,8 +27,8 @@ namespace L2d_Desktop
     /// </summary>
     public partial class MainWindow : Window
     {
-        public ushort C_Width { get; set; } = 500;
-        public ushort C_Height { get; set; } = 500;
+        public ushort C_Width { get; set; } = 540;
+        public ushort C_Height { get; set; } = 600;
 
         private bool isDo;
         private bool isConnect;
@@ -90,10 +90,14 @@ namespace L2d_Desktop
                 //对每一个像素的颜色进行转化
                 for (int i = 0; i < rgbvalues.Length; i += 4)
                 {
-                    rgbvalues[i] = imgBGR[^((i + 1) + 1)];
-                    rgbvalues[i + 1] = imgBGR[^((i + 2) + 1)];
-                    rgbvalues[i + 2] = imgBGR[^((i + 3) + 1)];
-                    rgbvalues[i + 3] = imgBGR[^((i + 0) + 1)];
+                    //rgbvalues[i] = imgBGR[^((i + 1) + 1)];
+                    //rgbvalues[i + 1] = imgBGR[^((i + 2) + 1)];
+                    //rgbvalues[i + 2] = imgBGR[^((i + 3) + 1)];
+                    //rgbvalues[i + 3] = imgBGR[^((i + 0) + 1)];
+                    rgbvalues[i] = imgBGR[i + 2];
+                    rgbvalues[i + 1] = imgBGR[i + 1];
+                    rgbvalues[i + 2] = imgBGR[i + 0];
+                    rgbvalues[i + 3] = imgBGR[i + 3];
                 }
 
                 //以可读写的方式将图像数据锁定
@@ -106,7 +110,7 @@ namespace L2d_Desktop
                 //把处理后的图像数组复制回图像
                 Marshal.Copy(rgbvalues, 0, ptr, rgbvalues.Length);
 
-                VCamera.Send(width, height, bmpdata);
+                VCamera.Send(width, height, rgbvalues);
 
                 main.Dispatcher.Invoke(() => 
                 { 

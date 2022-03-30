@@ -14,6 +14,7 @@ using System.Drawing.Imaging;
 using System.Net.Sockets;
 using System.Net;
 using System.Threading;
+using System.Drawing;
 
 namespace L2d_Desktop
 {
@@ -22,18 +23,14 @@ namespace L2d_Desktop
         private static Cmd cmd = new();
         private static MemoryMappedFile mmf;
         private static MemoryMappedFile mmf1;
-        private static Socket server;
         public static void Test()
         {
             mmf = MemoryMappedFile.CreateNew("Live2dFaceTrackConfig", 30, MemoryMappedFileAccess.ReadWrite);
-            server = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            server.Bind(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 2344));//绑定端口号和IP
 
             if (!cmd.IsRegistered("50E58CA6-B033-4594-8F2A-B1BFD936C9A8"))
             {
                 cmd.Regsvr32(AppDomain.CurrentDomain.BaseDirectory + "VCam.dll");
             }
-
             try
             {
                 //using var mmf = MemoryMappedFile.OpenExisting("Live2dFaceTrackConfig");
@@ -63,11 +60,23 @@ namespace L2d_Desktop
             writer.Write(height);
         }
 
-
         public static void Send(int width, int height, byte[] data)
         {
-            EndPoint point = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 6000);
-            server.SendTo(data, point);
+            if (mmf1 == null)
+                mmf1 = MemoryMappedFile.CreateNew("Live2dFaceTrack", data.LongLength + 8);
+            var stream = mmf1.CreateViewStream();
+            if (stream.Capacity < data.Length)
+            {
+                stream.Dispose();
+                mmf1.Dispose();
+                mmf1 = MemoryMappedFile.CreateNew("Live2dFaceTrack", data.LongLength + 8);
+                stream = mmf1.CreateViewStream();
+            }
+            BinaryWriter writer = new(stream);
+            writer.Write(width);
+            writer.Write(height);
+            writer.Write(data, 0, data.Length);
+            stream.Dispose();
         }
     }
     public class Cmd
