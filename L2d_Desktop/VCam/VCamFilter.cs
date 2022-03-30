@@ -23,8 +23,8 @@ namespace VCam
         private const int c_iFormatsCount = 8;
         private const int c_nGranularityW = 160;
         private const int c_nGranularityH = 120;
-        private const int c_nMinWidth = 320;
-        private const int c_nMinHeight = 240;
+        private const int c_nMinWidth = 540;
+        private const int c_nMinHeight = 600;
         private const int c_nMaxWidth = c_nMinWidth + c_nGranularityW * (c_iFormatsCount - 1);
         private const int c_nMaxHeight = c_nMinHeight + c_nGranularityH * (c_iFormatsCount - 1);
         private const int c_nMinFPS = 1;
