@@ -335,8 +335,6 @@ namespace VCam
             return hr;
         }
 
-        private byte[] temp_data;
-
         public int FillBuffer(ref IMediaSampleImpl _sample)
         {
             try

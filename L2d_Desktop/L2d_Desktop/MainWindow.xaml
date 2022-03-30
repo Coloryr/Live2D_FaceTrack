@@ -38,18 +38,34 @@
                 <Button Content="刷新" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="13,66,0,0" Width="60" Height="20" Click="Button_Click_2"/>
             </Grid>
         </GroupBox>
-        <GroupBox HorizontalAlignment="Left" Height="118" Header="虚拟摄像头" Margin="528,10,0,0" VerticalAlignment="Top" Width="254">
+        <GroupBox HorizontalAlignment="Left" Height="195" Header="虚拟摄像头" Margin="528,10,0,0" VerticalAlignment="Top" Width="254">
             <Grid>
                 <Button Content="安装" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0" Width="60" Height="20" Click="Button_Click_3"/>
                 <Button Content="卸载" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="75,10,0,0" Width="60" Height="20" Click="Button_Click_4"/>
-                <Label Content="宽" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center"/>
-                <TextBox HorizontalAlignment="Left" Margin="32,0,0,0" TextWrapping="Wrap" Text="{Binding C_Width}" VerticalAlignment="Center" Width="77" Height="18"/>
-                <Label Content="高" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                <TextBox HorizontalAlignment="Left" Margin="136,0,0,0" TextWrapping="Wrap" Text="{Binding C_Height}" VerticalAlignment="Center" Width="77" Height="18"/>
+                <Label Content="宽" HorizontalAlignment="Left" Margin="10,34,0,0" VerticalAlignment="Top"/>
+                <TextBox HorizontalAlignment="Left" Margin="32,37,0,0" TextWrapping="Wrap" Text="{Binding C_Width}" VerticalAlignment="Top" Width="77" Height="18"/>
+                <Label Content="高" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="109,34,0,0"/>
+                <TextBox HorizontalAlignment="Left" Margin="136,37,0,0" TextWrapping="Wrap" Text="{Binding C_Height}" VerticalAlignment="Top" Width="77" Height="18"/>
                 <Button Content="设置" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,59,0,0" Width="60" Height="20" Click="Button_Click_5"/>
+                <Label Content="背景色" HorizontalAlignment="Left" Margin="10,85,0,0" VerticalAlignment="Top"/>
+                <TextBox HorizontalAlignment="Left" Margin="32,110,0,0" TextWrapping="Wrap" Text="{Binding Color_R}" VerticalAlignment="Top" Width="38" Height="18"/>
+                <Label Content="R:" HorizontalAlignment="Left" Margin="10,106,0,0" VerticalAlignment="Top"/>
+                <TextBox HorizontalAlignment="Left" Margin="93,110,0,0" TextWrapping="Wrap" Text="{Binding Color_G}" VerticalAlignment="Top" Width="38" Height="18"/>
+                <Label Content="G:" HorizontalAlignment="Left" Margin="70,106,0,0" VerticalAlignment="Top"/>
+                <TextBox HorizontalAlignment="Left" Margin="151,110,0,0" TextWrapping="Wrap" Text="{Binding Color_B}" VerticalAlignment="Top" Width="38" Height="18"/>
+                <Label Content="B:" HorizontalAlignment="Left" Margin="131,106,0,0" VerticalAlignment="Top"/>
             </Grid>
         </GroupBox>
-        <Image HorizontalAlignment="Left" Height="200" Margin="269,133,0,0" VerticalAlignment="Top" Width="200" Name="ShowImg" Stretch="UniformToFill"/>
+        <Image HorizontalAlignment="Center" Height="200" Margin="0,200,0,0" VerticalAlignment="Center" Width="200" Name="ShowImg" Stretch="UniformToFill" RenderTransformOrigin="0.44,0.3">
+            <Image.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform ScaleX="-1.0"/>
+                    <SkewTransform/>
+                    <RotateTransform Angle="180"/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Image.RenderTransform>
+        </Image>
 
     </Grid>
 </Window>

@@ -27,6 +27,9 @@ namespace L2d_Desktop
     /// </summary>
     public partial class MainWindow : Window
     {
+        public static byte Color_R { get; set; } = 0;
+        public static byte Color_G { get; set; } = 255;
+        public static byte Color_B { get; set; } = 0;
         public ushort C_Width { get; set; } = 540;
         public ushort C_Height { get; set; } = 600;
 
@@ -66,7 +69,6 @@ namespace L2d_Desktop
         private static Bitmap bmp;
         private static WriteableBitmap bitmapSource;
         private static byte[] rgbvalues;
-        private static MemoryStream imgstream;
 
         public static Bitmap BGR24ToBitmap(byte[] imgBGR, int width, int height)
         {
@@ -94,10 +96,22 @@ namespace L2d_Desktop
                     //rgbvalues[i + 1] = imgBGR[^((i + 2) + 1)];
                     //rgbvalues[i + 2] = imgBGR[^((i + 3) + 1)];
                     //rgbvalues[i + 3] = imgBGR[^((i + 0) + 1)];
-                    rgbvalues[i] = imgBGR[i + 2];
-                    rgbvalues[i + 1] = imgBGR[i + 1];
-                    rgbvalues[i + 2] = imgBGR[i + 0];
+
                     rgbvalues[i + 3] = imgBGR[i + 3];
+
+                    if (rgbvalues[i + 3] == 0)
+                    {
+                        rgbvalues[i + 3] = 255;
+                        rgbvalues[i + 2] = Color_R;
+                        rgbvalues[i + 1] = Color_G;
+                        rgbvalues[i + 0] = Color_B;
+                    }
+                    else
+                    {
+                        rgbvalues[i + 2] = imgBGR[i + 0];
+                        rgbvalues[i + 1] = imgBGR[i + 1];
+                        rgbvalues[i] = imgBGR[i + 2];
+                    }
                 }
 
                 //以可读写的方式将图像数据锁定
