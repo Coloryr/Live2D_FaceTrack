@@ -157,7 +157,6 @@ public:
 
 		InitName();
 
-		name += ".model3.json";
 		LAppLive2DManager::GetInstance()->ChangeScene(dir, name);
 
 		LAppLive2DManager::GetInstance()->IsLoad = false;
@@ -358,6 +357,26 @@ public:
 
 		model->SetIdParamEyeBallY(name);
 	}
+	void SetIdParamBreath(System::String^ name)
+	{
+		if (LAppLive2DManager::GetInstance()->GetModelNum() == 0)
+			return;
+		LAppModel* model = LAppLive2DManager::GetInstance()->GetModel(0);
+		if (model == nullptr)
+			return;
+
+		model->SetIdParamBreath(name);
+	}
+	void InitBreath() 
+	{
+		if (LAppLive2DManager::GetInstance()->GetModelNum() == 0)
+			return;
+		LAppModel* model = LAppLive2DManager::GetInstance()->GetModel(0);
+		if (model == nullptr)
+			return;
+
+		model->InitBreath();
+	}
 	void SetHitAreaNameHead(System::String^ name)
 	{
 		Marshal::FreeHGlobal((System::IntPtr)HitAreaNameHead);
@@ -468,6 +487,24 @@ public:
 
 		Marshal::FreeHGlobal((System::IntPtr)str1);
 		return res;
+	}
+	/// <summary>
+	/// 给组件添加值
+	/// </summary>
+	bool AddParameterValue(int index, float value)
+	{
+		if (LAppLive2DManager::GetInstance()->GetModelNum() == 0)
+			return false;
+		LAppModel* model = LAppLive2DManager::GetInstance()->GetModel(0);
+		if (model == nullptr)
+			return false;
+
+		Live2D::Cubism::Framework::CubismModel* model1 = model->GetModel();
+		if (model1 == nullptr)
+			return false;
+
+		model1->AddParameterValue(index, value);
+		return true;
 	}
 	/// <summary>
 	/// 设置组件透明度

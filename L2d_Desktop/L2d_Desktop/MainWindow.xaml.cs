@@ -10,22 +10,16 @@ namespace L2d_Desktop
     /// </summary>
     public partial class MainWindow : Window
     {
-        public static byte Color_R { get; set; } = 0;
-        public static byte Color_G { get; set; } = 255;
-        public static byte Color_B { get; set; } = 0;
-        public ushort C_Width { get; set; } = 600;
-        public ushort C_Height { get; set; } = 600;
-
         private bool isDo;
         private bool isConnect;
-        private static MainWindow main;
+        public static MainWindow main;
 
         public static ushort Port { get; set; } = 12580;
         public MainWindow()
         {
             main = this;
             InitializeComponent();
-            DataContext = this;
+            DataContext = App.Config;
         }
 
         public static void Disconnect() 
@@ -40,8 +34,8 @@ namespace L2d_Desktop
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             new GLWindow().Show();
-
-            GLWindow.window.SetSize(C_Width, C_Height);
+            VCamera.Test();
+            GLWindow.window.SetSize(App.Config.C_Width, App.Config.C_Height);
             AdbUtils.Start();
             ResDevices();
         }
@@ -134,8 +128,9 @@ namespace L2d_Desktop
             {
                 string filename = file.FileName;
                 FileInfo info = new(filename);
-
-                GLWindow.window.live2d.LoadModel(info.DirectoryName + "/", info.Name.Replace(".model3.json", ""));
+                App.Config.Local = filename;
+                App.SaveConfig();
+                GLWindow.window.live2d.LoadModel(info.DirectoryName + "/", info.Name);
             }
         }
 
@@ -151,7 +146,271 @@ namespace L2d_Desktop
 
         private void Button_Click_5(object sender, RoutedEventArgs e)
         {
-            GLWindow.window.SetSize(C_Width, C_Height);
+            GLWindow.window.SetSize(App.Config.C_Width, App.Config.C_Height);
+            App.SaveConfig();
+        }
+
+        public void LoadDone() 
+        {
+            Dispatcher.Invoke(() =>
+            {
+                Com_ParamAngleX.SelectedItem = null;
+                Com_ParamAngleY.SelectedItem = null;
+                Com_ParamAngleZ.SelectedItem = null;
+                Com_ParamEyeLOpen.SelectedItem = null;
+                Com_ParamEyeROpen.SelectedItem = null;
+                Com_ParamEyeBallX.SelectedItem = null;
+                Com_ParamEyeBallY.SelectedItem = null;
+                Com_ParamBodyAngleX.SelectedItem = null;
+                Com_ParamBodyAngleY.SelectedItem = null;
+                Com_ParamBodyAngleZ.SelectedItem = null;
+                Com_ParamBreath.SelectedItem = null;
+                Com_ParamMouthOpenY.SelectedItem = null;
+
+                Com_ParamAngleX.Items.Clear();
+                Com_ParamAngleY.Items.Clear();
+                Com_ParamAngleZ.Items.Clear();
+                Com_ParamEyeLOpen.Items.Clear();
+                Com_ParamEyeROpen.Items.Clear();
+                Com_ParamEyeBallX.Items.Clear();
+                Com_ParamEyeBallY.Items.Clear();
+                Com_ParamBodyAngleX.Items.Clear();
+                Com_ParamBodyAngleY.Items.Clear();
+                Com_ParamBodyAngleZ.Items.Clear();
+                Com_ParamBreath.Items.Clear();
+                Com_ParamMouthOpenY.Items.Clear();
+
+                if (GLWindow.window.Parameters == null)
+                    return;
+
+                foreach (var item in GLWindow.window.Parameters)
+                {
+                    Com_ParamAngleX.Items.Add(item.Id);
+                    Com_ParamAngleY.Items.Add(item.Id);
+                    Com_ParamAngleZ.Items.Add(item.Id);
+                    Com_ParamEyeLOpen.Items.Add(item.Id);
+                    Com_ParamEyeROpen.Items.Add(item.Id);
+                    Com_ParamEyeBallX.Items.Add(item.Id);
+                    Com_ParamEyeBallY.Items.Add(item.Id);
+                    Com_ParamBodyAngleX.Items.Add(item.Id);
+                    Com_ParamBodyAngleY.Items.Add(item.Id);
+                    Com_ParamBodyAngleZ.Items.Add(item.Id);
+                    Com_ParamBreath.Items.Add(item.Id);
+                    Com_ParamMouthOpenY.Items.Add(item.Id);
+                }
+
+                if (Com_ParamAngleX.Items.Contains(App.Config.ParamAngleX))
+                {
+                    Com_ParamAngleX.SelectedItem = App.Config.ParamAngleX;
+                    GLWindow.window.live2d.SetIdParamAngleX(App.Config.ParamAngleX);
+                }
+                if (Com_ParamAngleY.Items.Contains(App.Config.ParamAngleY))
+                {
+                    Com_ParamAngleY.SelectedItem = App.Config.ParamAngleY;
+                    GLWindow.window.live2d.SetIdParamAngleY(App.Config.ParamAngleY);
+                }
+                if (Com_ParamAngleZ.Items.Contains(App.Config.ParamAngleZ))
+                {
+                    Com_ParamAngleZ.SelectedItem = App.Config.ParamAngleZ;
+                    GLWindow.window.live2d.SetIdParamAngleZ(App.Config.ParamAngleZ);
+                }
+                if (Com_ParamEyeLOpen.Items.Contains(App.Config.ParamEyeLOpen))
+                {
+                    Com_ParamEyeLOpen.SelectedItem = App.Config.ParamEyeLOpen;
+                }
+                if (Com_ParamEyeROpen.Items.Contains(App.Config.ParamEyeROpen))
+                {
+                    Com_ParamEyeROpen.SelectedItem = App.Config.ParamEyeROpen;
+                }
+                if (Com_ParamEyeBallX.Items.Contains(App.Config.ParamEyeBallX))
+                {
+                    Com_ParamEyeBallX.SelectedItem = App.Config.ParamEyeBallX;
+                    GLWindow.window.live2d.SetIdParamEyeBallX(App.Config.ParamEyeBallX);
+                }
+                if (Com_ParamEyeBallY.Items.Contains(App.Config.ParamEyeBallY))
+                {
+                    Com_ParamEyeBallY.SelectedItem = App.Config.ParamEyeBallY;
+                    GLWindow.window.live2d.SetIdParamEyeBallY(App.Config.ParamEyeBallY);
+                }
+                if (Com_ParamBodyAngleX.Items.Contains(App.Config.ParamBodyAngleX))
+                {
+                    Com_ParamBodyAngleX.SelectedItem = App.Config.ParamBodyAngleX;
+                    GLWindow.window.live2d.SetIdParamBodyAngleX(App.Config.ParamBodyAngleX);
+                }
+                if (Com_ParamBodyAngleY.Items.Contains(App.Config.ParamBodyAngleY))
+                {
+                    Com_ParamBodyAngleY.SelectedItem = App.Config.ParamBodyAngleY;
+                }
+                if (Com_ParamBodyAngleZ.Items.Contains(App.Config.ParamBodyAngleZ))
+                {
+                    Com_ParamBodyAngleZ.SelectedItem = App.Config.ParamBodyAngleZ;
+                }
+                if (Com_ParamBreath.Items.Contains(App.Config.ParamBreath))
+                {
+                    Com_ParamBreath.SelectedItem = App.Config.ParamBreath;
+                    GLWindow.window.live2d.SetIdParamBreath(App.Config.ParamBreath);
+                }
+                if (Com_ParamMouthOpenY.Items.Contains(App.Config.ParamMouthOpenY))
+                {
+                    Com_ParamMouthOpenY.SelectedItem = App.Config.ParamMouthOpenY;
+                }
+                GLWindow.window.live2d.InitBreath();
+                GLWindow.window.CheckIndex();
+            });
+        }
+
+        private void Com_ParamAngleX_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            var item = Com_ParamAngleX.SelectedItem as string;
+            if (item == null)
+                return;
+
+            App.Config.ParamAngleX = item;
+            GLWindow.window.live2d.SetIdParamAngleX(item);
+            GLWindow.window.live2d.InitBreath();
+            GLWindow.window.CheckIndex();
+
+            App.SaveConfig();
+        }
+
+        private void Com_ParamAngleY_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            var item = Com_ParamAngleY.SelectedItem as string;
+            if (item == null)
+                return;
+
+            App.Config.ParamAngleY = item;
+            GLWindow.window.live2d.SetIdParamAngleY(item);
+            GLWindow.window.live2d.InitBreath();
+            GLWindow.window.CheckIndex();
+
+            App.SaveConfig();
+        }
+
+        private void Com_ParamAngleZ_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            var item = Com_ParamAngleZ.SelectedItem as string;
+            if (item == null)
+                return;
+
+            App.Config.ParamAngleZ = item;
+            GLWindow.window.live2d.SetIdParamAngleZ(item);
+            GLWindow.window.live2d.InitBreath();
+            GLWindow.window.CheckIndex();
+
+            App.SaveConfig();
+        }
+
+        private void Com_ParamEyeLOpen_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            var item = Com_ParamEyeLOpen.SelectedItem as string;
+            if (item == null)
+                return;
+
+            App.Config.ParamEyeLOpen = item;
+            GLWindow.window.CheckIndex();
+
+            App.SaveConfig();
+        }
+
+        private void Com_ParamEyeROpen_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            var item = Com_ParamEyeROpen.SelectedItem as string;
+            if (item == null)
+                return;
+
+            App.Config.ParamEyeROpen = item;
+            GLWindow.window.CheckIndex();
+
+            App.SaveConfig();
+        }
+
+        private void Com_ParamEyeBallX_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            var item = Com_ParamEyeBallX.SelectedItem as string;
+            if (item == null)
+                return;
+
+            App.Config.ParamEyeBallX = item;
+            GLWindow.window.CheckIndex();
+
+            App.SaveConfig();
+        }
+
+        private void Com_ParamEyeBallY_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            var item = Com_ParamEyeBallY.SelectedItem as string;
+            if (item == null)
+                return;
+
+            App.Config.ParamEyeBallY = item;
+            GLWindow.window.CheckIndex();
+
+            App.SaveConfig();
+        }
+
+        private void Com_ParamBodyAngleX_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            var item = Com_ParamBodyAngleX.SelectedItem as string;
+            if (item == null)
+                return;
+
+            App.Config.ParamBodyAngleX = item;
+            GLWindow.window.live2d.SetIdParamBodyAngleX(item);
+            GLWindow.window.live2d.InitBreath();
+            GLWindow.window.CheckIndex();
+
+            App.SaveConfig();
+        }
+
+        private void Com_ParamBreath_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            var item = Com_ParamBreath.SelectedItem as string;
+            if (item == null)
+                return;
+
+            App.Config.ParamBreath = item;
+            GLWindow.window.live2d.SetIdParamBodyAngleX(item);
+            GLWindow.window.live2d.InitBreath();
+            GLWindow.window.CheckIndex();
+
+            App.SaveConfig();
+        }
+
+        private void Com_ParamMouthOpenY_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            var item = Com_ParamMouthOpenY.SelectedItem as string;
+            if (item == null)
+                return;
+
+            App.Config.ParamMouthOpenY = item;
+            GLWindow.window.CheckIndex();
+
+            App.SaveConfig();
+        }
+
+        private void Com_ParamBodyAngleY_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            var item = Com_ParamBodyAngleY.SelectedItem as string;
+            if (item == null)
+                return;
+
+            App.Config.ParamBodyAngleY = item;
+            GLWindow.window.CheckIndex();
+
+            App.SaveConfig();
+        }
+
+        private void Com_ParamBodyAngleZ_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            var item = Com_ParamBodyAngleZ.SelectedItem as string;
+            if (item == null)
+                return;
+
+            App.Config.ParamBodyAngleZ = item;
+            GLWindow.window.CheckIndex();
+
+            App.SaveConfig();
         }
     }
 }

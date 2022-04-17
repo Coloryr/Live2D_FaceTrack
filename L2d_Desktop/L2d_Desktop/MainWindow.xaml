@@ -6,8 +6,8 @@
     xmlns:local="clr-namespace:L2d_Desktop"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="Live2d_FaceTrack电脑端"
-    Width="812"
-    Height="450"
+    Width="818"
+    Height="599"
     Loaded="Window_Loaded"
     ResizeMode="CanMinimize"
     mc:Ignorable="d">
@@ -67,7 +67,7 @@
         <GroupBox
             Name="Group_Setting"
             Width="254"
-            Height="120"
+            Height="75"
             Margin="10,273,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
@@ -91,8 +91,8 @@
         </GroupBox>
         <GroupBox
             Name="Group_Model"
-            Width="254"
-            Height="118"
+            Width="508"
+            Height="472"
             Margin="269,10,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
@@ -106,12 +106,167 @@
                     VerticalAlignment="Top"
                     Click="Button_Click_2"
                     Content="选择模型" />
+                <Label
+                    Margin="10,30,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Content="ParamAngleX" />
+                <ComboBox
+                    Name="Com_ParamAngleX"
+                    Width="230"
+                    Height="20"
+                    Margin="10,55,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    SelectionChanged="Com_ParamAngleX_SelectionChanged" />
+                <Label
+                    Margin="10,75,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Content="ParamAngleY" />
+                <ComboBox
+                    x:Name="Com_ParamAngleY"
+                    Width="230"
+                    Height="20"
+                    Margin="10,100,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    SelectionChanged="Com_ParamAngleY_SelectionChanged" />
+                <Label
+                    Margin="10,120,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Content="ParamAngleZ" />
+                <ComboBox
+                    x:Name="Com_ParamAngleZ"
+                    Width="230"
+                    Height="20"
+                    Margin="10,145,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    SelectionChanged="Com_ParamAngleZ_SelectionChanged" />
+                <Label
+                    Margin="10,165,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Content="ParamEyeLOpen" />
+                <ComboBox
+                    x:Name="Com_ParamEyeLOpen"
+                    Width="230"
+                    Height="20"
+                    Margin="10,190,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    SelectionChanged="Com_ParamEyeLOpen_SelectionChanged" />
+                <Label
+                    Margin="10,210,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Content="ParamEyeROpen" />
+                <ComboBox
+                    x:Name="Com_ParamEyeROpen"
+                    Width="230"
+                    Height="20"
+                    Margin="10,235,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    SelectionChanged="Com_ParamEyeROpen_SelectionChanged" />
+                <Label
+                    Margin="10,255,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Content="ParamEyeBallX" />
+                <ComboBox
+                    x:Name="Com_ParamEyeBallX"
+                    Width="230"
+                    Height="20"
+                    Margin="10,280,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    SelectionChanged="Com_ParamEyeBallX_SelectionChanged" />
+                <Label
+                    Margin="10,300,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Content="ParamEyeBallY" />
+                <ComboBox
+                    x:Name="Com_ParamEyeBallY"
+                    Width="230"
+                    Height="20"
+                    Margin="10,325,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    SelectionChanged="Com_ParamEyeBallY_SelectionChanged" />
+                <ComboBox
+                    x:Name="Com_ParamBodyAngleX"
+                    Width="230"
+                    Height="20"
+                    Margin="264,55,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    SelectionChanged="Com_ParamBodyAngleX_SelectionChanged" />
+                <Label
+                    Margin="264,30,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Content="ParamBodyAngleX" />
+                <Label
+                    Margin="10,345,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Content="ParamBreath" />
+                <ComboBox
+                    x:Name="Com_ParamBreath"
+                    Width="230"
+                    Height="20"
+                    Margin="10,370,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    SelectionChanged="Com_ParamBreath_SelectionChanged" />
+                <Label
+                    Margin="10,390,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Content="ParamMouthOpenY" />
+                <ComboBox
+                    x:Name="Com_ParamMouthOpenY"
+                    Width="230"
+                    Height="20"
+                    Margin="10,415,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    SelectionChanged="Com_ParamMouthOpenY_SelectionChanged" />
+                <Label
+                    Margin="264,75,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Content="ParamBodyAngleY" />
+                <ComboBox
+                    x:Name="Com_ParamBodyAngleY"
+                    Width="230"
+                    Height="20"
+                    Margin="264,100,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    SelectionChanged="Com_ParamBodyAngleY_SelectionChanged" />
+                <Label
+                    Margin="264,120,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Content="ParamBodyAngleZ" />
+                <ComboBox
+                    x:Name="Com_ParamBodyAngleZ"
+                    Width="230"
+                    Height="20"
+                    Margin="264,145,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top" SelectionChanged="Com_ParamBodyAngleZ_SelectionChanged" />
             </Grid>
         </GroupBox>
         <GroupBox
             Width="254"
-            Height="195"
-            Margin="528,10,0,0"
+            Height="129"
+            Margin="10,353,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
             Header="虚拟摄像头">
@@ -161,52 +316,52 @@
                 <Button
                     Width="60"
                     Height="20"
-                    Margin="10,59,0,0"
+                    Margin="180,10,0,0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
                     Click="Button_Click_5"
                     Content="设置" />
                 <Label
-                    Margin="10,85,0,0"
+                    Margin="10,59,0,0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
                     Content="背景色" />
                 <TextBox
                     Width="38"
                     Height="18"
-                    Margin="32,110,0,0"
+                    Margin="78,63,0,0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
                     Text="{Binding Color_R}"
                     TextWrapping="Wrap" />
                 <Label
-                    Margin="10,106,0,0"
+                    Margin="56,59,0,0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
                     Content="R:" />
                 <TextBox
                     Width="38"
                     Height="18"
-                    Margin="93,110,0,0"
+                    Margin="139,63,0,0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
                     Text="{Binding Color_G}"
                     TextWrapping="Wrap" />
                 <Label
-                    Margin="70,106,0,0"
+                    Margin="116,59,0,0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
                     Content="G:" />
                 <TextBox
                     Width="38"
                     Height="18"
-                    Margin="151,110,0,0"
+                    Margin="197,63,0,0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
                     Text="{Binding Color_B}"
                     TextWrapping="Wrap" />
                 <Label
-                    Margin="131,106,0,0"
+                    Margin="177,59,0,0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
                     Content="B:" />

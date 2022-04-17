@@ -64,6 +64,7 @@ LAppModel::LAppModel()
     _idParamBodyAngleX = CubismFramework::GetIdManager()->GetId(ParamBodyAngleX);
     _idParamEyeBallX = CubismFramework::GetIdManager()->GetId(ParamEyeBallX);
     _idParamEyeBallY = CubismFramework::GetIdManager()->GetId(ParamEyeBallY);
+    _idParamBreath = CubismFramework::GetIdManager()->GetId(ParamBreath);
 }
 
 LAppModel::~LAppModel()
@@ -117,6 +118,12 @@ void LAppModel::SetIdParamEyeBallY(System::String^ name)
     _idParamEyeBallY = CubismFramework::GetIdManager()->GetId(str1);
     Marshal::FreeHGlobal((System::IntPtr)str1);
 }
+void LAppModel::SetIdParamBreath(System::String^ name)
+{
+    char* str1 = (char*)(void*)Marshal::StringToHGlobalAnsi(name);
+    _idParamBreath = CubismFramework::GetIdManager()->GetId(str1);
+    Marshal::FreeHGlobal((System::IntPtr)str1);
+}
 
 void LAppModel::LoadAssets(System::String^ dir, System::String^ fileName)
 {
@@ -141,6 +148,24 @@ void LAppModel::LoadAssets(System::String^ dir, System::String^ fileName)
     CreateRenderer();
 
     SetupTextures();
+}
+
+void LAppModel::InitBreath() 
+{
+    if (_breath != nullptr)
+        CubismBreath::Delete(_breath);
+
+    _breath = CubismBreath::Create();
+
+    csmVector<CubismBreath::BreathParameterData> breathParameters;
+
+    /*breathParameters.PushBack(CubismBreath::BreathParameterData(_idParamAngleX, 0.0f, 15.0f, 6.5345f, 0.5f));
+    breathParameters.PushBack(CubismBreath::BreathParameterData(_idParamAngleY, 0.0f, 8.0f, 3.5345f, 0.5f));
+    breathParameters.PushBack(CubismBreath::BreathParameterData(_idParamAngleZ, 0.0f, 10.0f, 5.5345f, 0.5f));*/
+    breathParameters.PushBack(CubismBreath::BreathParameterData(_idParamBodyAngleX, 0.0f, 4.0f, 15.5345f, 0.5f));
+    breathParameters.PushBack(CubismBreath::BreathParameterData(_idParamBreath, 0.5f, 0.5f, 3.2345f, 0.5f));
+
+    _breath->SetParameters(breathParameters);
 }
 
 
@@ -230,22 +255,12 @@ void LAppModel::SetupModel(ICubismModelSetting* setting)
     //EyeBlink
     if (_modelSetting->GetEyeBlinkParameterCount() > 0)
     {
-        _eyeBlink = CubismEyeBlink::Create(_modelSetting);
+        //_eyeBlink = CubismEyeBlink::Create(_modelSetting);
     }
 
     //Breath
     {
-        _breath = CubismBreath::Create();
-
-        csmVector<CubismBreath::BreathParameterData> breathParameters;
-
-        breathParameters.PushBack(CubismBreath::BreathParameterData(_idParamAngleX, 0.0f, 15.0f, 6.5345f, 0.5f));
-        breathParameters.PushBack(CubismBreath::BreathParameterData(_idParamAngleY, 0.0f, 8.0f, 3.5345f, 0.5f));
-        breathParameters.PushBack(CubismBreath::BreathParameterData(_idParamAngleZ, 0.0f, 10.0f, 5.5345f, 0.5f));
-        breathParameters.PushBack(CubismBreath::BreathParameterData(_idParamBodyAngleX, 0.0f, 4.0f, 15.5345f, 0.5f));
-        breathParameters.PushBack(CubismBreath::BreathParameterData(CubismFramework::GetIdManager()->GetId(ParamBreath), 0.5f, 0.5f, 3.2345f, 0.5f));
-
-        _breath->SetParameters(breathParameters);
+        InitBreath();
     }
 
     //UserData
@@ -266,7 +281,7 @@ void LAppModel::SetupModel(ICubismModelSetting* setting)
         csmInt32 eyeBlinkIdCount = _modelSetting->GetEyeBlinkParameterCount();
         for (csmInt32 i = 0; i < eyeBlinkIdCount; ++i)
         {
-            _eyeBlinkIds.PushBack(_modelSetting->GetEyeBlinkParameterId(i));
+            //_eyeBlinkIds.PushBack(_modelSetting->GetEyeBlinkParameterId(i));
         }
     }
 

@@ -34,6 +34,17 @@ namespace L2d_Desktop
         private byte[] data;
         private byte[] rgbvalues;
 
+        private int ParamAngleX =-1;
+        private int ParamAngleY = -1;
+        private int ParamAngleZ = -1;
+        private int ParamEyeLOpen = -1;
+        private int ParamEyeROpen = -1;
+        private int ParamEyeBallX = -1;
+        private int ParamEyeBallY = -1;
+        private int ParamMouthOpenY = -1;
+        private int ParamBodyAngleY = -1;
+        private int ParamBodyAngleZ = -1;
+
         public GLWindow()
         {
             InitializeComponent();
@@ -52,35 +63,76 @@ namespace L2d_Desktop
                 //对每一个像素的颜色进行转化
                 for (int i = 0; i < rgbvalues.Length; i += 4)
                 {
-                    //rgbvalues[i] = imgBGR[^((i + 1) + 1)];
-                    //rgbvalues[i + 1] = imgBGR[^((i + 2) + 1)];
-                    //rgbvalues[i + 2] = imgBGR[^((i + 3) + 1)];
-                    //rgbvalues[i + 3] = imgBGR[^((i + 0) + 1)];
-
                     rgbvalues[i + 3] = data[i + 3];
-
-                    if (rgbvalues[i + 3] == 0)
-                    {
-                        rgbvalues[i + 3] = 255;
-                        rgbvalues[i + 2] = MainWindow.Color_R;
-                        rgbvalues[i + 1] = MainWindow.Color_G;
-                        rgbvalues[i + 0] = MainWindow.Color_B;
-                    }
-                    else
-                    {
-                        rgbvalues[i + 2] = data[i + 0];
-                        rgbvalues[i + 1] = data[i + 1];
-                        rgbvalues[i] = data[i + 2];
-                    }
+                    rgbvalues[i + 2] = data[i + 0];
+                    rgbvalues[i + 1] = data[i + 1];
+                    rgbvalues[i] = data[i + 2];
                 }
 
                 VCamera.Send(glControl.Width, glControl.Height, rgbvalues);
             }
         }
 
+        public void CheckIndex() 
+        {
+            for (int a = 0; a < Parameters.Length; a++)
+            {
+                var item = Parameters[a];
+                if (item.Id == App.Config.ParamAngleX)
+                {
+                    ParamAngleX = a;
+                }
+                if (item.Id == App.Config.ParamAngleY)
+                {
+                    ParamAngleY = a;
+                }
+                if (item.Id == App.Config.ParamAngleZ)
+                {
+                    ParamAngleZ = a;
+                }
+                if (item.Id == App.Config.ParamEyeLOpen)
+                {
+                    ParamEyeLOpen = a;
+                }
+                if (item.Id == App.Config.ParamEyeROpen)
+                {
+                    ParamEyeROpen = a;
+                }
+                if (item.Id == App.Config.ParamEyeBallX)
+                {
+                    ParamEyeBallX = a;
+                }
+                if (item.Id == App.Config.ParamEyeBallY)
+                {
+                    ParamEyeBallY = a;
+                }
+                if (item.Id == App.Config.ParamMouthOpenY)
+                {
+                    ParamMouthOpenY = a;
+                }
+                if (item.Id == App.Config.ParamBodyAngleY)
+                {
+                    ParamBodyAngleY = a;
+                }
+                if (item.Id == App.Config.ParamBodyAngleZ)
+                {
+                    ParamBodyAngleZ = a;
+                }
+            }
+        }
+
         private void Update()
         {
-            
+            live2d.AddParameterValue(ParamAngleX, ValueSave.ParamAngleX);
+            live2d.AddParameterValue(ParamAngleY, ValueSave.ParamAngleY);
+            live2d.AddParameterValue(ParamAngleZ, ValueSave.ParamAngleZ);
+            live2d.AddParameterValue(ParamEyeLOpen, ValueSave.ParamEyeLOpen);
+            live2d.AddParameterValue(ParamEyeROpen, ValueSave.ParamEyeROpen);
+            live2d.AddParameterValue(ParamEyeBallX, ValueSave.ParamEyeBallX);
+            live2d.AddParameterValue(ParamEyeBallY, ValueSave.ParamEyeBallY);
+            live2d.AddParameterValue(ParamMouthOpenY, ValueSave.ParamMouthOpenY);
+            live2d.AddParameterValue(ParamBodyAngleZ, ValueSave.ParamBodyAngleZ);
+            live2d.AddParameterValue(ParamBodyAngleY, ValueSave.ParamBodyAngleY);
         }
 
         private void LoadDone(string name)
@@ -92,6 +144,8 @@ namespace L2d_Desktop
             Motions = live2d.GetMotions();
             Parts = live2d.GetParts();
             Parameters = live2d.GetParameters();
+
+            MainWindow.main.LoadDone();
         }
 
         private IntPtr LoadFile(string path, ref uint size)
@@ -110,7 +164,6 @@ namespace L2d_Desktop
 
             data = new byte[glControl.Width * glControl.Height * 4];
 
-            VCamera.Test();
             VCamera.Set((ushort)glControl.Width, (ushort)glControl.Height);
         }
 
@@ -127,7 +180,12 @@ namespace L2d_Desktop
             _timer.Start();
 
             live2d.Start(glControl.ClientSize.Width, glControl.ClientSize.Height);
-            live2d.LoadModel(@"E:\live2d\haru\runtime/", "Haru");
+            if (File.Exists(App.Config.Local) && App.Config.Local.EndsWith(".model3.json"))
+            {
+                FileInfo info = new(App.Config.Local);
+
+                live2d.LoadModel(info.DirectoryName + "/", info.Name);
+            }
         }
 
         private void glControl_Paint(object? sender, PaintEventArgs e)
@@ -139,11 +197,15 @@ namespace L2d_Desktop
         {
             glControl.MakeCurrent();
 
+            GL.ClearColor((float)App.Config.Color_R/255, (float)App.Config.Color_G/255, (float)App.Config.Color_B/255, 1.0f);
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+            GL.ClearDepth(1.0);
+
             live2d.Tick(glControl.Width, glControl.Height, (DateTime.Now - beginTime).TotalMilliseconds / 1000);
 
             glControl.SwapBuffers();
 
-            GL.ReadPixels(0, 0, glControl.Width, glControl.Height, PixelFormat.Rgba, PixelType.Byte, data);
+            GL.ReadPixels(0, 0, glControl.Width, glControl.Height, PixelFormat.Rgba, PixelType.UnsignedByte, data);
             BGR24ToBitmap();
         }
 

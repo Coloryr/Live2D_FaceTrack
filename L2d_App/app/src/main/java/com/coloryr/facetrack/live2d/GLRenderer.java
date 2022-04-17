@@ -18,8 +18,6 @@ import javax.microedition.khronos.opengles.GL10;
 import java.nio.*;
 
 public class GLRenderer implements GLSurfaceView.Renderer {
-    private ByteBuffer data;
-
     private static int fps;
 
     public static int getFps() {
@@ -38,7 +36,6 @@ public class GLRenderer implements GLSurfaceView.Renderer {
     public void onSurfaceChanged(GL10 gl, int width, int height) {
         JniBridgeJava.nativeOnSurfaceChanged(width, height);
         MainActivity.ar.onSurfaceChanged(width, height);
-        data = ByteBuffer.allocateDirect(width * height * 4).order(ByteOrder.nativeOrder());
     }
 
     @Override
@@ -46,7 +43,7 @@ public class GLRenderer implements GLSurfaceView.Renderer {
         long start = System.currentTimeMillis();
         MainActivity.ar.onDrawFrame();
         JniBridgeJava.nativeOnDrawFrame();
-        SocketUtils.sendImage(data, width, height);
+        SocketUtils.send();
         long end = System.currentTimeMillis();
         if ((end - start) > 100)
             Log.i("time", "time=" + (end - start));

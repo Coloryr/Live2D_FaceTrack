@@ -8,6 +8,7 @@ import com.coloryr.facetrack.MainActivity;
 import com.coloryr.facetrack.R;
 import com.coloryr.facetrack.RgbaUtils;
 import com.coloryr.facetrack.live2d.JniBridgeJava;
+import com.coloryr.facetrack.live2d.TrackSave;
 import com.coloryr.facetrack.objs.ModelObj;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -45,46 +46,27 @@ public class SocketUtils {
             short type = pack.readShort();
             switch (type) {
                 case 0:
-                    ModelObj obj = new ModelObj();
-                    obj.isLoad = JniBridgeJava.isLoad();
-                    obj.name = JniBridgeJava.getName();
-                    ByteBuf buff = Unpooled.buffer();
-                    buff.writeShort(0);
-                    String data = JSON.toJSONString(obj);
-                    buff.writeInt(data.length());
-                    buff.writeCharSequence(data, StandardCharsets.UTF_8);
-                    sendPack(buff);
+
                     break;
             }
         }
     }
 
-    private static byte[] b;
-
-    public static void sendImage(ByteBuffer data, int width, int height) {
+    public static void send() {
         if (channel != null) {
-            GLES30.glReadPixels(0, 0, width, height, GLES30.GL_RGBA, GLES30.GL_UNSIGNED_BYTE, data);
-
-            ByteBuf buf = Unpooled.buffer();
-            buf.writeShort(256);
-            buf.writeInt(width);
-            buf.writeInt(height);
-
-            if (b == null || b.length != data.remaining())
-                b = new byte[data.remaining()];
-            data.get(b, 0, b.length);
-            buf.writeInt(b.length);
-            buf.writeBytes(b, 0, b.length);
-
-            if (channel != null) {
-                try {
-                    channel.writeAndFlush(buf).syncUninterruptibly();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-
-            data.clear();
+            ByteBuf buff = Unpooled.buffer();
+            buff.writeShort(0);
+            buff.writeFloat(TrackSave.AngleY);
+            buff.writeFloat(TrackSave.AngleX);
+            buff.writeFloat(TrackSave.AngleZ);
+            buff.writeFloat(TrackSave.MouthOpenY);
+            buff.writeFloat(TrackSave.EyeBallX);
+            buff.writeFloat(TrackSave.EyeBallY);
+            buff.writeFloat(TrackSave.BodyZ);
+            buff.writeFloat(TrackSave.BodyY);
+            buff.writeFloat(TrackSave.EyeLOpen);
+            buff.writeFloat(TrackSave.EyeROpen);
+            sendPack(buff);
         }
     }
 

@@ -11,6 +11,19 @@ using DotNetty.Codecs;
 
 namespace L2d_Desktop
 {
+    public record ValueSave
+    {
+        public static float ParamAngleX;
+        public static float ParamAngleY;
+        public static float ParamAngleZ;
+        public static float ParamEyeLOpen;
+        public static float ParamEyeROpen;
+        public static float ParamEyeBallX;
+        public static float ParamEyeBallY;
+        public static float ParamMouthOpenY;
+        public static float ParamBodyAngleZ;
+        public static float ParamBodyAngleY;
+    }
     internal class SocketUtils
     {
         public static byte[] PackInit = Encoding.UTF8.GetBytes("Live2D server init");
@@ -21,7 +34,6 @@ namespace L2d_Desktop
 
         private static MultithreadEventLoopGroup group = new MultithreadEventLoopGroup();
         public static IChannel clientChannel;
-        private static IByteBuffer delimiter = Unpooled.Buffer();
 
         public static Task<bool> Init()
         {
@@ -90,7 +102,18 @@ namespace L2d_Desktop
                 short type = buff.ReadShort();
                 switch (type)
                 {
-                    
+                    case 0:
+                        ValueSave.ParamAngleY = buff.ReadFloat();
+                        ValueSave.ParamAngleX = buff.ReadFloat();
+                        ValueSave.ParamAngleZ = buff.ReadFloat();
+                        ValueSave.ParamMouthOpenY = buff.ReadFloat();
+                        ValueSave.ParamEyeBallX = buff.ReadFloat();
+                        ValueSave.ParamEyeBallY = buff.ReadFloat();
+                        ValueSave.ParamBodyAngleZ = buff.ReadFloat();
+                        ValueSave.ParamBodyAngleY = buff.ReadFloat();
+                        ValueSave.ParamEyeLOpen = buff.ReadFloat();
+                        ValueSave.ParamEyeROpen = buff.ReadFloat();
+                        break;
                 }
                 buff.Clear();
             }

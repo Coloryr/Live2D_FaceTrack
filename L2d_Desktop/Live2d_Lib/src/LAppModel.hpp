@@ -131,6 +131,8 @@ public:
     void SetIdParamBodyAngleX(System::String^ name);
     void SetIdParamEyeBallX(System::String^ name);
     void SetIdParamEyeBallY(System::String^ name);
+    void SetIdParamBreath(System::String^ name);
+    void InitBreath();
 
 protected:
     /**
@@ -199,6 +201,7 @@ private:
     const Csm::CubismId* _idParamBodyAngleX; ///< パラメータID: ParamBodyAngleX
     const Csm::CubismId* _idParamEyeBallX; ///< パラメータID: ParamEyeBallX
     const Csm::CubismId* _idParamEyeBallY; ///< パラメータID: ParamEyeBallXY
+    const Csm::CubismId* _idParamBreath;
 
     Csm::Rendering::CubismOffscreenFrame_OpenGLES2  _renderBuffer;   ///< フレームバッファ以外の描画先
 };

@@ -15,6 +15,7 @@ namespace L2d_Desktop
     public partial class App : Application
     {
         public const string Version = "1.0.0";
+        public static ConfigObj Config { get; private set; }
 
         public static App ThisApp { get; private set; }
         public static string Local { get; private set; }
@@ -66,6 +67,13 @@ namespace L2d_Desktop
             DispatcherUnhandledException += new DispatcherUnhandledExceptionEventHandler(App_DispatcherUnhandledException);
             TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
+
+            Config = ConfigUtils.Config<ConfigObj>("config.json", new());
+        }
+
+        public static void SaveConfig() 
+        {
+            ConfigUtils.Save(Config, "config.json");
         }
 
         public static void CloseLog()

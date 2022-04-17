@@ -110,9 +110,9 @@ void LAppDelegate::Run(int width, int height, double time)
     LAppPal::UpdateTime(time);
 
     // 画面の初期化
-    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    /*glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glClearDepth(1.0);
+    glClearDepth(1.0);*/
 
     //描画更新
     _view->Render();

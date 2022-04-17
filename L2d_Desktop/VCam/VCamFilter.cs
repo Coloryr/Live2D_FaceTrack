@@ -21,10 +21,10 @@ namespace VCam
         private const int c_iFormatsCount = 8;
         private const int c_nGranularityW = 160;
         private const int c_nGranularityH = 120;
-        private static int c_nMinWidth = 540;
-        private static int c_nMinHeight = 600;
-        private static int c_nMaxWidth = c_nMinWidth + c_nGranularityW * (c_iFormatsCount - 1);
-        private static int c_nMaxHeight = c_nMinHeight + c_nGranularityH * (c_iFormatsCount - 1);
+        private static int c_nMinWidth;
+        private static int c_nMinHeight;
+        private static int c_nMaxWidth;
+        private static int c_nMaxHeight;
         private const int c_nMinFPS = 1;
         private const int c_nMaxFPS = 30;
 
@@ -91,8 +91,6 @@ namespace VCam
                 m_bmi1.bmiHeader.Height = pic_height;
                 m_bmi1.bmiHeader.Width = pic_width;
                 m_bmi1.bmiHeader.ImageSize = ALIGN16(m_bmi1.bmiHeader.Width) * ALIGN16(Math.Abs(m_bmi1.bmiHeader.Height)) * m_bmi1.bmiHeader.BitCount / 8;
-
-                MessageBox.Show("set width:" + width + " height:" + height);
             }
         }
 
