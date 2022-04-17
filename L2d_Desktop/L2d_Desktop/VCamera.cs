@@ -55,7 +55,6 @@ namespace L2d_Desktop
         {
             using MemoryMappedViewStream stream = mmf.CreateViewStream();
             BinaryWriter writer = new(stream);
-            writer.Write(1);
             writer.Write(width);
             writer.Write(height);
         }

@@ -1,24 +1,7 @@
-﻿using L2d_Desktop.objs;
+﻿using Microsoft.Win32;
 using SharpAdbClient;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Interop;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace L2d_Desktop
 {
@@ -30,7 +13,7 @@ namespace L2d_Desktop
         public static byte Color_R { get; set; } = 0;
         public static byte Color_G { get; set; } = 255;
         public static byte Color_B { get; set; } = 0;
-        public ushort C_Width { get; set; } = 540;
+        public ushort C_Width { get; set; } = 600;
         public ushort C_Height { get; set; } = 600;
 
         private bool isDo;
@@ -54,113 +37,13 @@ namespace L2d_Desktop
             });
         }
 
-        public static void ShowModelInfo(ModelObj obj) 
-        {
-            if (obj == null)
-                return;
-            main.Dispatcher.Invoke(() =>
-            {
-                main.ModelName.Text = obj.name;
-                main.ModelLoad.Text = obj.isLoad.ToString();
-            });
-        }
-
-        private static int save;
-        private static Bitmap bmp;
-        private static WriteableBitmap bitmapSource;
-        private static byte[] rgbvalues;
-
-        public static Bitmap BGR24ToBitmap(byte[] imgBGR, int width, int height)
-        {
-            if (bmp == null || bmp.Width != width || bmp.Height != height)
-            {
-                VCamera.Set((ushort)width, (ushort)height);
-                bmp = new(width, height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-                main.Dispatcher.Invoke(() =>
-                {
-                    bitmapSource = new WriteableBitmap(width, height, 96, 96, PixelFormats.Bgra32, null);
-                    main.ShowImg.Source = bitmapSource;
-                });
-            }
-
-            if (imgBGR != null)
-            {
-                //构造一个位图数组进行数据存储
-                if (rgbvalues == null || rgbvalues.Length != imgBGR.Length)
-                    rgbvalues = new byte[imgBGR.Length];
-
-                //对每一个像素的颜色进行转化
-                for (int i = 0; i < rgbvalues.Length; i += 4)
-                {
-                    //rgbvalues[i] = imgBGR[^((i + 1) + 1)];
-                    //rgbvalues[i + 1] = imgBGR[^((i + 2) + 1)];
-                    //rgbvalues[i + 2] = imgBGR[^((i + 3) + 1)];
-                    //rgbvalues[i + 3] = imgBGR[^((i + 0) + 1)];
-
-                    rgbvalues[i + 3] = imgBGR[i + 3];
-
-                    if (rgbvalues[i + 3] == 0)
-                    {
-                        rgbvalues[i + 3] = 255;
-                        rgbvalues[i + 2] = Color_R;
-                        rgbvalues[i + 1] = Color_G;
-                        rgbvalues[i + 0] = Color_B;
-                    }
-                    else
-                    {
-                        rgbvalues[i + 2] = imgBGR[i + 0];
-                        rgbvalues[i + 1] = imgBGR[i + 1];
-                        rgbvalues[i] = imgBGR[i + 2];
-                    }
-                }
-
-                //以可读写的方式将图像数据锁定
-                BitmapData bmpdata = bmp.LockBits(new(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadWrite, bmp.PixelFormat);
-                //得到图形在内存中的首地址
-                IntPtr ptr = bmpdata.Scan0;
-
-                //将被锁定的位图数据复制到该数组内
-                //Marshal.Copy(ptr, rgbvalues, 0, imgBGR.Length);
-                //把处理后的图像数组复制回图像
-                Marshal.Copy(rgbvalues, 0, ptr, rgbvalues.Length);
-
-                VCamera.Send(width, height, rgbvalues);
-
-                main.Dispatcher.Invoke(() => 
-                { 
-                    bitmapSource.Lock(); 
-                    Marshal.Copy(rgbvalues, 0, bitmapSource.BackBuffer, rgbvalues.Length); //请注意_wbBitmap的数据格式以及buffer大小，以免溢出和显示异常
-                    bitmapSource.AddDirtyRect(new Int32Rect(0, 0, width, height));
-                    bitmapSource.Unlock();
-                });
-
-
-                //解锁位图像素
-                bmp.UnlockBits(bmpdata);
-
-            }
-
-            return bmp;
-        }
-
-        public static void ShowPic(byte[] data, int width, int height)
-        {
-            save++;
-            var bitmap = BGR24ToBitmap(data, width, height);
-            if (save > 10)
-            {
-                save = 0;
-
-                bitmap.Save("test.png");
-            }
-        }
-
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            new GLWindow().Show();
+
+            GLWindow.window.SetSize(C_Width, C_Height);
             AdbUtils.Start();
             ResDevices();
-            VCamera.Test();
-            VCamera.Set(C_Width, C_Height);
         }
 
         private void ResDevices() 
@@ -240,7 +123,20 @@ namespace L2d_Desktop
 
         private void Button_Click_2(object sender, RoutedEventArgs e)
         {
-            SocketUtils.GetModelInfo();
+            OpenFileDialog file = new()
+            {
+                Filter = "模型文件|*.model3.json",
+                RestoreDirectory = true,
+                FilterIndex = 1
+            };
+
+            if (file.ShowDialog() == true)
+            {
+                string filename = file.FileName;
+                FileInfo info = new(filename);
+
+                GLWindow.window.live2d.LoadModel(info.DirectoryName + "/", info.Name.Replace(".model3.json", ""));
+            }
         }
 
         private void Button_Click_3(object sender, RoutedEventArgs e)
@@ -255,7 +151,7 @@ namespace L2d_Desktop
 
         private void Button_Click_5(object sender, RoutedEventArgs e)
         {
-            VCamera.Set(C_Width, C_Height);
+            GLWindow.window.SetSize(C_Width, C_Height);
         }
     }
 }

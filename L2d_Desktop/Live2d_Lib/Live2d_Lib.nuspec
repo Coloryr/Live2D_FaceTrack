@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package >
+  <metadata>
+    <id>Live2d_For_WPF</id>
+    <version>1.0.0-pre3</version>
+    <title>Live2d_For_WPF</title>
+    <authors>Coloryr</authors>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="expression">MIT</license>
+    <!-- <icon>icon.png</icon> -->
+    <projectUrl>https://github.com/Coloryr/Live2d_For_WPF</projectUrl>
+    <description>Live2d_For_WPF</description>
+    <releaseNotes>Live2d_For_WPF</releaseNotes>
+    <copyright>2022</copyright>
+    <tags>live2d wpf</tags>
+  </metadata>
+  <files>
+    <file src="../x64/debug/Live2d_Lib.dll" target="lib/net6.0/" />
+    <file src="../x64/debug/Live2d_Lib.pdb" target="lib/net6.0/" />
+    <file src="../x64/debug/Live2d_Lib.xml" target="lib/net6.0/" />
+  </files>
+</package>

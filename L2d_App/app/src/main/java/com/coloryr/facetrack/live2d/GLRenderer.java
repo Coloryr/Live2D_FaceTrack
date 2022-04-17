@@ -18,8 +18,6 @@ import javax.microedition.khronos.opengles.GL10;
 import java.nio.*;
 
 public class GLRenderer implements GLSurfaceView.Renderer {
-    private final int width = 540;
-    private final int height = 600;
     private ByteBuffer data;
 
     private static int fps;
@@ -38,9 +36,9 @@ public class GLRenderer implements GLSurfaceView.Renderer {
 
     @Override
     public void onSurfaceChanged(GL10 gl, int width, int height) {
-        JniBridgeJava.nativeOnSurfaceChanged(this.width, this.height);
-        MainActivity.ar.onSurfaceChanged(this.width, this.height);
-        data = ByteBuffer.allocateDirect(this.width * this.height * 4).order(ByteOrder.nativeOrder());
+        JniBridgeJava.nativeOnSurfaceChanged(width, height);
+        MainActivity.ar.onSurfaceChanged(width, height);
+        data = ByteBuffer.allocateDirect(width * height * 4).order(ByteOrder.nativeOrder());
     }
 
     @Override
@@ -53,12 +51,5 @@ public class GLRenderer implements GLSurfaceView.Renderer {
         if ((end - start) > 100)
             Log.i("time", "time=" + (end - start));
         fps++;
-    }
-
-    private void unbindPixelBuffer() {
-        // Unmap the buffers
-        GLES30.glUnmapBuffer(GLES30.GL_PIXEL_PACK_BUFFER);
-        GLES30.glBindBuffer(GLES30.GL_PIXEL_PACK_BUFFER, GLES30.GL_NONE);
-        GLES30.glBindFramebuffer(GLES30.GL_FRAMEBUFFER, GLES30.GL_NONE);
     }
 }

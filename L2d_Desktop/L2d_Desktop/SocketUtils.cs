@@ -7,8 +7,6 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using L2d_Desktop.objs;
 using DotNetty.Codecs;
 
 namespace L2d_Desktop
@@ -39,7 +37,7 @@ namespace L2d_Desktop
                         .Handler(new ActionChannelInitializer<ISocketChannel>(channel =>
                         {
                             IChannelPipeline pipeline = channel.Pipeline;
-                            pipeline.AddLast(new LengthFieldBasedFrameDecoder(1024 * 2000000, 0, 4, 0, 4)).AddLast(new ClientHandler());
+                            pipeline.AddLast(new LengthFieldBasedFrameDecoder(1024 * 10, 0, 4, 0, 4)).AddLast(new ClientHandler());
                         }));
                     clientChannel = await bootstrap.ConnectAsync(new IPEndPoint(IPAddress.Parse("127.0.0.1"), MainWindow.Port));
                     SendTest();
@@ -76,8 +74,6 @@ namespace L2d_Desktop
             clientChannel.WriteAndFlushAsync(Unpooled.CopiedBuffer(PackInit));
         }
 
-        private static byte[] temp;
-
         public static void OnPack(IByteBuffer buff)
         {
             if (!CheckOk)
@@ -94,21 +90,7 @@ namespace L2d_Desktop
                 short type = buff.ReadShort();
                 switch (type)
                 {
-                    case 0:
-                        int length = buff.ReadInt();
-                        string data = buff.ReadCharSequence(length, Encoding.UTF8).ToString();
-                        var obj = JsonConvert.DeserializeObject<ModelObj>(data);
-                        MainWindow.ShowModelInfo(obj);
-                        break;
-                    case 256:
-                        var width = buff.ReadInt();
-                        var height = buff.ReadInt();
-                        length = buff.ReadInt();
-                        if (temp == null || temp.Length != length)
-                            temp = new byte[length];
-                        buff.ReadBytes(temp, 0, length);
-                        MainWindow.ShowPic(temp, width, height);
-                        break;
+                    
                 }
                 buff.Clear();
             }

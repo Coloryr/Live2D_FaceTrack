@@ -1,6 +1,8 @@
-﻿using OpenTK.Windowing.Desktop;
+﻿using OpenTK.Windowing.Common;
+using OpenTK.Windowing.Desktop;
 using System;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
@@ -16,7 +18,6 @@ namespace L2d_Desktop
 
         public static App ThisApp { get; private set; }
         public static string Local { get; private set; }
-        private static GLView gLView;
 
         private static LogWindow log;
 
@@ -65,8 +66,6 @@ namespace L2d_Desktop
             DispatcherUnhandledException += new DispatcherUnhandledExceptionEventHandler(App_DispatcherUnhandledException);
             TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
-
-            gLView = new(GameWindowSettings.Default, NativeWindowSettings.Default);
         }
 
         public static void CloseLog()

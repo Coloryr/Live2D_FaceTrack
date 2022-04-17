@@ -16,17 +16,15 @@ namespace VCam
     {
         #region Constants
 
-        private static int c_iDefaultWidth = 540;
-        private static int c_iDefaultHeight = 600;
         private const int c_nDefaultBitCount = 32;
         private const int c_iDefaultFPS = 20;
         private const int c_iFormatsCount = 8;
         private const int c_nGranularityW = 160;
         private const int c_nGranularityH = 120;
-        private const int c_nMinWidth = 540;
-        private const int c_nMinHeight = 600;
-        private const int c_nMaxWidth = c_nMinWidth + c_nGranularityW * (c_iFormatsCount - 1);
-        private const int c_nMaxHeight = c_nMinHeight + c_nGranularityH * (c_iFormatsCount - 1);
+        private static int c_nMinWidth = 540;
+        private static int c_nMinHeight = 600;
+        private static int c_nMaxWidth = c_nMinWidth + c_nGranularityW * (c_iFormatsCount - 1);
+        private static int c_nMaxHeight = c_nMinHeight + c_nGranularityH * (c_iFormatsCount - 1);
         private const int c_nMinFPS = 1;
         private const int c_nMaxFPS = 30;
 
@@ -34,11 +32,11 @@ namespace VCam
 
         #region Variables
 
-        protected int m_nWidth = c_iDefaultWidth;
-        protected int m_nHeight = c_iDefaultHeight;
+        protected int m_nWidth;
+        protected int m_nHeight;
 
-        private int pic_width = c_iDefaultWidth;
-        private int pic_height = c_iDefaultHeight;
+        private int pic_width;
+        private int pic_height;
 
         protected int m_nBitCount = c_nDefaultBitCount;
         protected long m_nAvgTimePerFrame = UNITS / c_iDefaultFPS;
@@ -64,11 +62,12 @@ namespace VCam
         public VCamFilter()
             : base("Live2D FaceTrack Camera")
         {
-            mm = new MMFile(this);
-            mm.Tick();
             m_bmi.bmiHeader = new BitmapInfoHeader();
             m_bmi1.bmiHeader = new BitmapInfoHeader();
 
+            mm = new MMFile(this);
+            mm.Tick();
+           
             m_bmi1.bmiHeader.BitCount = 32;
             m_bmi1.bmiHeader.Height = pic_height;
             m_bmi1.bmiHeader.Width = pic_width;
@@ -83,8 +82,11 @@ namespace VCam
         {
             if (pic_width != width && pic_height != height)
             {
-                pic_width = width;
-                pic_height = height;
+                c_nMinWidth = pic_width = width;
+                c_nMinHeight = pic_height = height;
+
+                c_nMaxWidth = c_nMinWidth + c_nGranularityW * (c_iFormatsCount - 1);
+                c_nMaxHeight = c_nMinHeight + c_nGranularityH * (c_iFormatsCount - 1);
 
                 m_bmi1.bmiHeader.Height = pic_height;
                 m_bmi1.bmiHeader.Width = pic_width;
@@ -480,8 +482,8 @@ namespace VCam
 
             _caps.guid = FormatType.VideoInfo;
             _caps.VideoStandard = AnalogVideoStandard.None;
-            _caps.InputSize.Width = c_iDefaultWidth;
-            _caps.InputSize.Height = c_iDefaultHeight;
+            _caps.InputSize.Width = pic_width;
+            _caps.InputSize.Height = pic_height;
             _caps.MinCroppingSize.Width = c_nMinWidth;
             _caps.MinCroppingSize.Height = c_nMinHeight;
 

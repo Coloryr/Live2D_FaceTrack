@@ -27,14 +27,10 @@ namespace VCam
                 var mmf = MemoryMappedFile.OpenExisting("Live2dFaceTrackConfig");
                 MemoryMappedViewStream stream = mmf.CreateViewStream();
                 BinaryReader reader = new BinaryReader(stream);
-                var load = reader.ReadInt32();
-                if (load == 1)
-                {
-                    ushort width = reader.ReadUInt16();
-                    ushort height = reader.ReadUInt16();
+                ushort width = reader.ReadUInt16();
+                ushort height = reader.ReadUInt16();
 
-                    cam.Set(width, height);
-                }
+                cam.Set(width, height);
                 stream.Dispose();
                 mmf.Dispose();
             }
