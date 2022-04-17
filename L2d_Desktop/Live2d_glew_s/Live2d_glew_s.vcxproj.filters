@@ -31,7 +31,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="src\glew\build\glew.rc">
+    <ResourceCompile Include="src\glew\glew.rc">
       <Filter>资源文件</Filter>
     </ResourceCompile>
   </ItemGroup>
