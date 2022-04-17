@@ -1,0 +1,9 @@
+build_out
+build
+bin
+obj
+output_files
+.gradle
+.vs
+.cxx
+x64
