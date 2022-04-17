@@ -1,6 +1,11 @@
 ﻿using Microsoft.Win32;
 using SharpAdbClient;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
+using System.Runtime.CompilerServices;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace L2d_Desktop
@@ -13,6 +18,32 @@ namespace L2d_Desktop
         private bool isDo;
         private bool isConnect;
         public static MainWindow main;
+
+        public class PartOb : INotifyPropertyChanged
+        {
+            private float _Opacitie;
+
+            public string Id { get; set; }
+            public float Opacitie
+            {
+                get
+                {
+                    return _Opacitie;
+                }
+                set
+                {
+                    _Opacitie = value;
+                    OnPropertyChanged();
+                }
+            }
+
+            public event PropertyChangedEventHandler? PropertyChanged;
+
+            private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
 
         public static ushort Port { get; set; } = 12580;
         public MainWindow()
@@ -411,6 +442,37 @@ namespace L2d_Desktop
             GLWindow.window.CheckIndex();
 
             App.SaveConfig();
+        }
+
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            var item = Part_List.SelectedItem as PartOb;
+            if (item == null)
+                return;
+
+            var value = new InputBoxWindow(item.Opacitie).Set();
+
+            GLWindow.window.live2d.SetPartOpacitie(item.Id, value);
+            item.Opacitie = value;
+        }
+
+        private void MenuItem_Click1(object sender, RoutedEventArgs e) 
+        {
+            var list = GLWindow.window.live2d.GetParts();
+            if (list == null)
+            {
+                return;
+            }
+
+            Part_List.Items.Clear();
+            foreach (var item in list)
+            {
+                Part_List.Items.Add(new PartOb()
+                {
+                    Id = item.Id,
+                    Opacitie = item.Opacitie
+                });
+            }
         }
     }
 }

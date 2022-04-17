@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "L2d_Desktop": {
+      "commandName": "Project",
+      "sqlDebugging": false,
+      "nativeDebugging": true
+    }
+  }
+}

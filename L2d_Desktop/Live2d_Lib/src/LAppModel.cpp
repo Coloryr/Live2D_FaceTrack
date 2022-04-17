@@ -472,7 +472,7 @@ void LAppModel::Update()
     // ポーズの設定
     if (_pose != NULL)
     {
-        _pose->UpdateParameters(_model, deltaTimeSeconds);
+        //_pose->UpdateParameters(_model, deltaTimeSeconds);
     }
 
     _model->Update();

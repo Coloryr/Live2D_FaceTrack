@@ -444,13 +444,12 @@ public:
 			return nullptr;
 		int count = model1->GetPartCount();
 		array<Part^>^ list = gcnew array<Part^>(count);
-		Csm::csmFloat32* values = model1->PartOpacities();
 		Csm::csmVector<Csm::CubismIdHandle>* ids = model1->PartIds();
 		for (int i = 0; i < count; i++)
 		{
 			Part^ item = gcnew Part();
 			item->Id = gcnew System::String(ids->At(i)->GetString().GetRawString());
-			item->Opacitie = values[i];
+			item->Opacitie = model1->GetPartOpacity(ids->At(i));
 			list[i] = item;
 		}
 

@@ -92,7 +92,7 @@
         <GroupBox
             Name="Group_Model"
             Width="508"
-            Height="472"
+            Height="338"
             Margin="269,10,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
@@ -172,7 +172,7 @@
                     VerticalAlignment="Top"
                     SelectionChanged="Com_ParamEyeROpen_SelectionChanged" />
                 <Label
-                    Margin="10,255,0,0"
+                    Margin="264,165,0,0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
                     Content="ParamEyeBallX" />
@@ -180,12 +180,12 @@
                     x:Name="Com_ParamEyeBallX"
                     Width="230"
                     Height="20"
-                    Margin="10,280,0,0"
+                    Margin="264,190,0,0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
                     SelectionChanged="Com_ParamEyeBallX_SelectionChanged" />
                 <Label
-                    Margin="10,300,0,0"
+                    Margin="264,211,0,0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
                     Content="ParamEyeBallY" />
@@ -193,7 +193,7 @@
                     x:Name="Com_ParamEyeBallY"
                     Width="230"
                     Height="20"
-                    Margin="10,325,0,0"
+                    Margin="264,235,0,0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
                     SelectionChanged="Com_ParamEyeBallY_SelectionChanged" />
@@ -211,7 +211,7 @@
                     VerticalAlignment="Top"
                     Content="ParamBodyAngleX" />
                 <Label
-                    Margin="10,345,0,0"
+                    Margin="10,255,0,0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
                     Content="ParamBreath" />
@@ -219,12 +219,12 @@
                     x:Name="Com_ParamBreath"
                     Width="230"
                     Height="20"
-                    Margin="10,370,0,0"
+                    Margin="10,280,0,0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
                     SelectionChanged="Com_ParamBreath_SelectionChanged" />
                 <Label
-                    Margin="10,390,0,0"
+                    Margin="264,255,0,0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
                     Content="ParamMouthOpenY" />
@@ -232,7 +232,7 @@
                     x:Name="Com_ParamMouthOpenY"
                     Width="230"
                     Height="20"
-                    Margin="10,415,0,0"
+                    Margin="264,280,0,0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
                     SelectionChanged="Com_ParamMouthOpenY_SelectionChanged" />
@@ -260,12 +260,13 @@
                     Height="20"
                     Margin="264,145,0,0"
                     HorizontalAlignment="Left"
-                    VerticalAlignment="Top" SelectionChanged="Com_ParamBodyAngleZ_SelectionChanged" />
+                    VerticalAlignment="Top"
+                    SelectionChanged="Com_ParamBodyAngleZ_SelectionChanged" />
             </Grid>
         </GroupBox>
         <GroupBox
             Width="254"
-            Height="129"
+            Height="199"
             Margin="10,353,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
@@ -367,5 +368,35 @@
                     Content="B:" />
             </Grid>
         </GroupBox>
+        <ListView
+            Name="Part_List"
+            Width="508"
+            Height="199"
+            Margin="269,353,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Background="Transparent"
+            BorderBrush="#1E88E5"
+            ScrollViewer.VerticalScrollBarVisibility="Visible"
+            SelectionMode="Single">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn
+                        Width="200"
+                        DisplayMemberBinding="{Binding Id}"
+                        Header="部件名" />
+                    <GridViewColumn
+                        Width="200"
+                        DisplayMemberBinding="{Binding Opacitie}"
+                        Header="透明度" />
+                </GridView>
+            </ListView.View>
+            <ListView.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Click="MenuItem_Click" Header="修改" />
+                    <MenuItem Click="MenuItem_Click1" Header="加载" />
+                </ContextMenu>
+            </ListView.ContextMenu>
+        </ListView>
     </Grid>
 </Window>
