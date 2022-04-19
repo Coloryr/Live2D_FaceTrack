@@ -5,6 +5,11 @@ import android.content.Context;
 import android.media.Image;
 import android.util.Log;
 import com.coloryr.facetrack.live2d.TrackSave;
+import com.coloryr.facetrack.track.IAR;
+import com.coloryr.facetrack.track.ar.BackgroundRenderer;
+import com.coloryr.facetrack.track.ar.CameraPermissionHelper;
+import com.coloryr.facetrack.track.ar.DisplayRotationHelper;
+import com.coloryr.facetrack.track.ar.SnackbarHelper;
 import com.google.ar.core.*;
 import com.google.ar.core.exceptions.*;
 import com.coloryr.facetrack.*;
@@ -14,9 +19,8 @@ import java.util.Collection;
 import java.util.EnumSet;
 import java.util.List;
 
-public class ArTest {
+public class ArCoreTest implements IAR {
     private Session session;
-    private final SnackbarHelper messageSnackbarHelper = new SnackbarHelper();
     private static final String TAG = MainActivity.class.getSimpleName();
     private final BackgroundRenderer backgroundRenderer = new BackgroundRenderer();
     private final DisplayRotationHelper displayRotationHelper;
@@ -24,7 +28,7 @@ public class ArTest {
     private final Activity activity;
     private boolean installRequested;
 
-    public ArTest(Activity context){
+    public ArCoreTest(Activity context){
         this.activity = context;
         this.context  = context;
         displayRotationHelper = new DisplayRotationHelper(context);
@@ -50,7 +54,7 @@ public class ArTest {
         }
     }
 
-    public void onResume() {
+    public boolean onResume() {
         if (session == null) {
             Exception exception = null;
             String message = null;
@@ -58,7 +62,7 @@ public class ArTest {
                 switch (ArCoreApk.getInstance().requestInstall(activity, !installRequested)) {
                     case INSTALL_REQUESTED:
                         installRequested = true;
-                        return;
+                        return false;
                     case INSTALLED:
                         break;
                 }
@@ -67,7 +71,7 @@ public class ArTest {
                 // permission on Android M and above, now is a good time to ask the user for it.
                 if (!CameraPermissionHelper.hasCameraPermission(activity)) {
                     CameraPermissionHelper.requestCameraPermission(activity);
-                    return;
+                    return false;
                 }
 
                 // Create the session and configure it to use a front-facing (selfie) camera.
@@ -104,9 +108,8 @@ public class ArTest {
             }
 
             if (message != null) {
-                messageSnackbarHelper.showError(activity, message);
                 Log.e(TAG, "Exception creating session", exception);
-                return;
+                return false;
             }
         }
 
@@ -114,51 +117,26 @@ public class ArTest {
         try {
             session.resume();
         } catch (CameraNotAvailableException e) {
-            messageSnackbarHelper.showError(activity, "Camera not available. Try restarting the app.");
             session = null;
-            return;
+            return false;
         }
 
         displayRotationHelper.onResume();
+
+        return true;
     }
 
     public void onDrawFrame() {
         if (session == null) {
             return;
         }
-        // Notify ARCore session that the view size changed so that the perspective matrix and
-        // the video background can be properly adjusted.
         displayRotationHelper.updateSessionIfNeeded(session);
 
         try {
             session.setCameraTextureName(backgroundRenderer.getTextureId());
 
-            // Obtain the current frame from ARSession. When the configuration is set to
-            // UpdateMode.BLOCKING (it is by default), this will throttle the rendering to the
-            // camera framerate.
             Frame frame = session.update();
-            Camera camera = frame.getCamera();
 
-            // Get projection matrix.
-            float[] projectionMatrix = new float[16];
-            camera.getProjectionMatrix(projectionMatrix, 0, 0.1f, 100.0f);
-
-            // Get camera matrix and draw.
-            float[] viewMatrix = new float[16];
-            camera.getViewMatrix(viewMatrix, 0);
-
-            // Compute lighting from average intensity of the image.
-            // The first three components are color scaling factors.
-            // The last one is the average pixel intensity in gamma space.
-            final float[] colorCorrectionRgba = new float[4];
-            frame.getLightEstimate().getColorCorrection(colorCorrectionRgba, 0);
-
-            // If frame is ready, render camera preview image to the GL surface.
-            //backgroundRenderer.draw(frame);
-
-            // ARCore's face detection works best on upright faces, relative to gravity.
-            // If the device cannot determine a screen side aligned with gravity, face
-            // detection may not work optimally.
             Collection<AugmentedFace> faces = session.getAllTrackables(AugmentedFace.class);
             for (AugmentedFace face : faces) {
                 if (face.getTrackingState() != TrackingState.TRACKING) {

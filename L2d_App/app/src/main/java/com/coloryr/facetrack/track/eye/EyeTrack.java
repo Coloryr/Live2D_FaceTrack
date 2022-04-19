@@ -25,9 +25,8 @@ public class EyeTrack {
     }
 
     private ByteBuffer imageToByteBuffer(final Image image) {
-        final Rect crop = image.getCropRect();
-        final int width = crop.width();
-        final int height = crop.height();
+        final int width = image.getWidth();
+        final int height = image.getHeight();
 
         final Image.Plane[] planes = image.getPlanes();
         final byte[] rowData = new byte[planes[0].getRowStride()];
@@ -57,7 +56,7 @@ public class EyeTrack {
             final int widthShifted = width >> shift;
             final int heightShifted = height >> shift;
 
-            buffer.position(rowStride * (crop.top >> shift) + pixelStride * (crop.left >> shift));
+            buffer.position(rowStride * (0 >> shift) + pixelStride * (0 >> shift));
 
             for (int row = 0; row < heightShifted; row++) {
                 final int length;
@@ -96,8 +95,10 @@ public class EyeTrack {
                 FaceMeshOptions.builder()
                         .setStaticImageMode(true)
                         .setRefineLandmarks(true)
+                        .setMinDetectionConfidence(0.8f)
                         .setRunOnGpu(true)
                         .build());
+
         facemesh.setErrorListener((message, e) -> Log.e(TAG, "MediaPipe Face Mesh error:" + message));
 
         facemesh.setResultListener(this::run);

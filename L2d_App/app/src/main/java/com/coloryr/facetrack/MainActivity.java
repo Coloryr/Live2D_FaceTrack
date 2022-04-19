@@ -20,9 +20,12 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import com.coloryr.facetrack.socket.ServiceBroadcastReceiver;
+import com.coloryr.facetrack.track.IAR;
+import com.coloryr.facetrack.track.ar.SnackbarHelper;
+import com.coloryr.facetrack.track.arengine.ArEngineTest;
 import com.coloryr.facetrack.track.eye.EyeTrack;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.coloryr.facetrack.track.arcore.ArTest;
+import com.coloryr.facetrack.track.arcore.ArCoreTest;
 import com.coloryr.facetrack.live2d.GLView;
 
 import java.util.ArrayList;
@@ -36,13 +39,15 @@ public class MainActivity extends AppCompatActivity {
     public static GLView glView;
 
     @SuppressLint("StaticFieldLeak")
-    public static ArTest ar;
+    public static IAR ar;
 
     @SuppressLint("StaticFieldLeak")
     public static EyeTrack eye;
 
     @SuppressLint("StaticFieldLeak")
     public static ImageView imageView;
+
+    private final SnackbarHelper messageSnackbarHelper = new SnackbarHelper();
 
     private final String[] permissions = new String[]{
             Manifest.permission.CAMERA,
@@ -54,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
 
     private NotificationManager mNManager;
 
-    public static void makeNotification(String title, String text, String ticker){
+    public static void makeNotification(String title, String text, String ticker) {
         @SuppressLint("UnspecifiedImmutableFlag") PendingIntent pendingIntent = PendingIntent.getActivity(app.getApplicationContext(),
                 1, app.getIntent(), PendingIntent.FLAG_CANCEL_CURRENT);
         Notification.Builder mBuilder = new Notification.Builder(app.getApplicationContext(),
@@ -93,11 +98,10 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
 
         eye = new EyeTrack(this);
-        ar = new ArTest(this);
+        ar = new ArCoreTest(this);
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(ServiceBroadcastReceiver.START_ACTION);
-//        filter.addAction(ServiceBroadcastReceiver.STOP_ACTION);
         registerReceiver(receiver, filter);
     }
 
@@ -113,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public static void run(Runnable runnable){
+    public static void run(Runnable runnable) {
         app.mainHandler.post(runnable);
     }
 
@@ -121,7 +125,12 @@ public class MainActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
 
-        ar.onResume();
+        if (!ar.onResume()) {
+            ar = new ArEngineTest(this);
+            if (!ar.onResume()) {
+                messageSnackbarHelper.showError(this, "手机不支持AR功能");
+            }
+        }
         eye.init();
     }
 
