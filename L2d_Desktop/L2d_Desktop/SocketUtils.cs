@@ -51,7 +51,7 @@ namespace L2d_Desktop
                         }));
                     clientChannel = await bootstrap.ConnectAsync(new IPEndPoint(IPAddress.Parse("127.0.0.1"), MainWindow.Port));
                     SendTest();
-                    Thread.Sleep(5000);
+                    Thread.Sleep(1000);
                     return CheckOk;
                 }
                 catch (Exception e)
