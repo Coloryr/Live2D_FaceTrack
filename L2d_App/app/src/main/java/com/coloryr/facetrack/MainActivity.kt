@@ -3,9 +3,13 @@ package com.coloryr.facetrack
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.*
+import android.content.Context
+import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
-import android.os.*
+import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -14,13 +18,14 @@ import androidx.navigation.Navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI.setupActionBarWithNavController
 import com.coloryr.facetrack.live2d.GLView
-import com.coloryr.facetrack.socket.ServiceBroadcastReceiver
+import com.coloryr.facetrack.socket.ConnectService
 import com.coloryr.facetrack.track.IAR
 import com.coloryr.facetrack.track.ar.SnackbarHelper
 import com.coloryr.facetrack.track.arcore.ArCoreTest
 import com.coloryr.facetrack.track.arengine.ArEngineTest
 import com.coloryr.facetrack.track.eye.EyeTrack
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import java.io.PrintWriter
+import java.io.StringWriter
 
 class MainActivity : AppCompatActivity() {
     private val messageSnackbarHelper = SnackbarHelper()
@@ -29,8 +34,53 @@ class MainActivity : AppCompatActivity() {
         Manifest.permission.INTERNET
     )
     private val mainHandler = Handler(Looper.getMainLooper())
-    private val receiver = ServiceBroadcastReceiver()
     private var mNManager: NotificationManager? = null
+
+    override fun attachBaseContext(base: Context) {
+        super.attachBaseContext(base);
+
+        Handler(getMainLooper()).post {
+            while (true) {
+                try {
+                    Looper.loop()  //try-catch主线程的所有异常；Looper.loop()内部是一个死循环，出现异常时才会退出，所以这里使用while(true)。
+                } catch (e1: Exception) {
+                    val alertDialog1 = AlertDialog.Builder(this)
+                        .setTitle("这是标题")//标题
+                        .setMessage(getErrorInfoFromException(e1))//内容
+                        .setIcon(R.mipmap.ic_launcher)//图标
+                        .create()
+                    alertDialog1.show();
+                    e1.printStackTrace()
+                }
+            }
+        };
+
+        Thread.setDefaultUncaughtExceptionHandler { t, e1 ->
+            val alertDialog1 = AlertDialog.Builder(this)
+                .setTitle("这是标题")//标题
+                .setMessage(getErrorInfoFromException(e1))//内容
+                .setIcon(R.mipmap.ic_launcher)//图标
+                .create()
+            alertDialog1.show();
+            e1.printStackTrace()
+        }
+    }
+
+    fun getErrorInfoFromException(e: Throwable): String? {
+        return try {
+            val sw = StringWriter()
+            val pw = PrintWriter(sw)
+            e.printStackTrace(pw)
+            """
+     
+     $sw
+     
+     """.trimIndent()
+        } catch (e2: Exception) {
+            "bad getErrorInfoFromException"
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         isPermission
@@ -50,9 +100,8 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(this, navController, appBarConfiguration)
         eye = EyeTrack(this)
         ar = ArCoreTest(this)
-        val filter = IntentFilter()
-        filter.addAction(ServiceBroadcastReceiver.Companion.START_ACTION)
-        registerReceiver(receiver, filter)
+        val intent1 = Intent(this, ConnectService::class.java)
+        this.startService(intent1)
     }
 
     private val isPermission: Unit

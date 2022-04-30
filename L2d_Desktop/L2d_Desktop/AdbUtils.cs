@@ -39,8 +39,6 @@ namespace L2d_Desktop
                 {
                     devices.CreateForward(device, $"tcp:{MainWindow.Port}", "tcp:23456", true);
                     Thread.Sleep(500);
-                    devices.ExecuteRemoteCommand("am broadcast -a Live2dStart", device, receiver);
-                    Thread.Sleep(500);
                 }
                 catch (Exception e)
                 {

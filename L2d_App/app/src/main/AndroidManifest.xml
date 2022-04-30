@@ -35,13 +35,6 @@
         <service
                 android:name=".socket.ConnectService">
         </service>
-        <receiver android:name=".socket.ServiceBroadcastReceiver"
-                  android:exported="false">
-            <intent-filter >
-                <action android:name="Live2dStart"/>
-<!--                <action android:name="Live2dStop" />-->
-            </intent-filter>
-        </receiver>
         <meta-data android:name="com.google.ar.core" android:value="required" />
     </application>
 

@@ -15,6 +15,12 @@ import io.netty.channel.socket.nio.NioServerSocketChannel
 import io.netty.handler.codec.LengthFieldPrepender
 
 class ConnectService : Service() {
+    private var channelFuture: ChannelFuture? = null
+
+    //创建两个线程组 boosGroup、workerGroup
+    private val bossGroup: EventLoopGroup = NioEventLoopGroup()
+    private val workerGroup: EventLoopGroup = NioEventLoopGroup()
+
     override fun onBind(intent: Intent): IBinder? {
         return null
     }
@@ -25,7 +31,7 @@ class ConnectService : Service() {
     }
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-        if (isStart) return START_NOT_STICKY
+        if (isStart) return START_STICKY
         try {
             //创建服务端的启动对象，设置参数
             val bootstrap = ServerBootstrap()
@@ -47,7 +53,7 @@ class ConnectService : Service() {
         } catch (e: InterruptedException) {
             e.printStackTrace()
         }
-        return START_NOT_STICKY
+        return START_STICKY
     }
 
     override fun onDestroy() {
@@ -64,12 +70,7 @@ class ConnectService : Service() {
 
     companion object {
         const val TAG = "Live2dServer"
-        private var channelFuture: ChannelFuture? = null
-
-        //创建两个线程组 boosGroup、workerGroup
-        private val bossGroup: EventLoopGroup = NioEventLoopGroup()
-        private val workerGroup: EventLoopGroup = NioEventLoopGroup()
+        const val SERVER_PORT = 23456
         var isStart = false
-        private const val SERVER_PORT = 23456
     }
 }
