@@ -49,10 +49,10 @@ class MainActivity : AppCompatActivity() {
     override fun attachBaseContext(base: Context) {
         super.attachBaseContext(base);
 
-        Handler(getMainLooper()).post {
+        Handler(mainLooper).post {
             while (true) {
                 try {
-                    Looper.loop()  //try-catch主线程的所有异常；Looper.loop()内部是一个死循环，出现异常时才会退出，所以这里使用while(true)。
+                    Looper.loop()
                 } catch (e1: Exception) {
                     val alertDialog1 = AlertDialog.Builder(this)
                         .setTitle("这是标题")//标题
@@ -166,8 +166,8 @@ class MainActivity : AppCompatActivity() {
         @SuppressLint("StaticFieldLeak")
         var eye: EyeTrack? = null
 
+        @SuppressLint("StaticFieldLeak")
         private lateinit var fps: TextView
-        var list: Array<CubismParam?>? = null
         private val timer = Timer()
 
         fun makeNotification(title: String?, text: String?, ticker: String?) {
