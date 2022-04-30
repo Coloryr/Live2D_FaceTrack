@@ -10,14 +10,21 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
+import android.widget.Button
 import android.widget.ImageView
+import android.widget.RelativeLayout
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.navigation.Navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI.setupActionBarWithNavController
+import com.coloryr.facetrack.live2d.CubismParam
+import com.coloryr.facetrack.live2d.GLRenderer
 import com.coloryr.facetrack.live2d.GLView
+import com.coloryr.facetrack.live2d.JniBridgeJava
 import com.coloryr.facetrack.socket.ConnectService
 import com.coloryr.facetrack.track.IAR
 import com.coloryr.facetrack.track.ar.SnackbarHelper
@@ -26,6 +33,8 @@ import com.coloryr.facetrack.track.arengine.ArEngineTest
 import com.coloryr.facetrack.track.eye.EyeTrack
 import java.io.PrintWriter
 import java.io.StringWriter
+import java.util.*
+import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity() {
     private val messageSnackbarHelper = SnackbarHelper()
@@ -35,6 +44,7 @@ class MainActivity : AppCompatActivity() {
     )
     private val mainHandler = Handler(Looper.getMainLooper())
     private var mNManager: NotificationManager? = null
+    private var constraintLayout: RelativeLayout? = null
 
     override fun attachBaseContext(base: Context) {
         super.attachBaseContext(base);
@@ -91,13 +101,19 @@ class MainActivity : AppCompatActivity() {
         app = this
         glView = GLView(baseContext)
         setContentView(R.layout.activity_main)
-        imageView = findViewById(R.id.image)
-        //val navView = findViewById<BottomNavigationView>(R.id.nav_view)
-        val appBarConfiguration: AppBarConfiguration = AppBarConfiguration.Builder(
-            R.id.navigation_dashboard
-        ).build()
-        val navController = findNavController(this, R.id.nav_host_fragment_activity_main)
-        setupActionBarWithNavController(this, navController, appBarConfiguration)
+
+        constraintLayout = findViewById(R.id.gl_root)
+        fps = findViewById(R.id.fps)
+        timer.schedule(object : TimerTask() {
+            override fun run() {
+                val fps: Int = GLRenderer.getFps()
+                run(Runnable { MainActivity.fps.text = fps.toString() })
+            }
+        }, 0, 1000)
+        JniBridgeJava.ChangeModel()
+        glView!!.callAdd(constraintLayout)
+        JniBridgeJava.LoadModel("sizuku", "shizuku")
+
         eye = EyeTrack(this)
         ar = ArCoreTest(this)
         val intent1 = Intent(this, ConnectService::class.java)
@@ -150,8 +166,10 @@ class MainActivity : AppCompatActivity() {
         @SuppressLint("StaticFieldLeak")
         var eye: EyeTrack? = null
 
-        @SuppressLint("StaticFieldLeak")
-        var imageView: ImageView? = null
+        private lateinit var fps: TextView
+        var list: Array<CubismParam?>? = null
+        private val timer = Timer()
+
         fun makeNotification(title: String?, text: String?, ticker: String?) {
             @SuppressLint("UnspecifiedImmutableFlag") val pendingIntent = PendingIntent.getActivity(
                 app!!.applicationContext,
