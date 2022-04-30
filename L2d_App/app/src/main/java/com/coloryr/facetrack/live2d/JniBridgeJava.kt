@@ -125,6 +125,7 @@ object JniBridgeJava {
         _context = context
     }
 
+    @JvmStatic
     fun LoadFile(filePath: String?): ByteArray? {
         var fileData: InputStream? = null
         return try {
@@ -145,6 +146,7 @@ object JniBridgeJava {
         }
     }
 
+    @JvmStatic
     fun LoadModel(path: String, name: String) {
         val path1 = path.toByteArray(StandardCharsets.UTF_8)
         val name1 = name.toByteArray(StandardCharsets.UTF_8)
@@ -152,6 +154,7 @@ object JniBridgeJava {
         isLoad = true
     }
 
+    @JvmStatic
     fun onUpdate() {
         nativeSetParamValue("PARAM_ANGLE_X".toByteArray(StandardCharsets.UTF_8), TrackSave.AngleX)
         nativeSetParamValue("PARAM_ANGLE_Y".toByteArray(StandardCharsets.UTF_8), TrackSave.AngleY)
@@ -165,6 +168,7 @@ object JniBridgeJava {
         nativeSetParamValue("PARAM_EYE_R_OPEN".toByteArray(StandardCharsets.UTF_8), TrackSave.EyeROpen)
     }
 
+    @JvmStatic
     fun onLoadModel(name: String) {
         JniBridgeJava.name = name
         if (name == "shizuku.model3.json") {

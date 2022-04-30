@@ -10,7 +10,7 @@
     Height="599"
     Loaded="Window_Loaded"
     ResizeMode="CanMinimize"
-    mc:Ignorable="d">
+    mc:Ignorable="d" Closing="Window_Closing">
     <Grid>
         <Rectangle
             Fill="#FFF4F4F5"
@@ -90,7 +90,6 @@
             </Grid>
         </GroupBox>
         <GroupBox
-            Name="Group_Model"
             Width="508"
             Height="338"
             Margin="269,10,0,0"

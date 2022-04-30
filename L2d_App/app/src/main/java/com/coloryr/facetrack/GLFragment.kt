@@ -35,7 +35,7 @@ class GLFragment : Fragment() {
         JniBridgeJava.ChangeModel()
         MainActivity.glView!!.callAdd(constraintLayout)
         JniBridgeJava.LoadModel("sizuku", "shizuku")
-        button.setOnClickListener { v: View? ->
+        button.setOnClickListener {
             list = JniBridgeJava.cubismParams
             if (list == null) {
                 Log.i("mian", "get fail")

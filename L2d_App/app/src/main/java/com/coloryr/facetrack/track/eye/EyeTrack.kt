@@ -8,7 +8,6 @@ import android.media.Image
 import android.util.Log
 import androidx.exifinterface.media.ExifInterface
 import com.coloryr.facetrack.live2d.TrackSave
-import com.coloryr.facetrack.track.face.FaceTrack
 import com.google.android.renderscript.Toolkit.yuvToRgbBitmap
 import com.google.android.renderscript.YuvFormat
 import com.google.mediapipe.solutions.facemesh.FaceMesh
@@ -18,7 +17,6 @@ import java.nio.ByteBuffer
 
 class EyeTrack(private val context: Context) {
     private var facemesh: FaceMesh? = null
-    private var test: FaceTrack? = null
     private fun imageToByteBuffer(image: Image): ByteBuffer {
         val width = image.width
         val height = image.height

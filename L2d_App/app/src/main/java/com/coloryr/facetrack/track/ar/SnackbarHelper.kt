@@ -56,7 +56,7 @@ class SnackbarHelper {
             if (dismissBehavior != DismissBehavior.HIDE) {
                 messageSnackbar!!.setAction(
                     "Dismiss"
-                ) { v: View? -> messageSnackbar!!.dismiss() }
+                ) { messageSnackbar!!.dismiss() }
                 if (dismissBehavior == DismissBehavior.FINISH) {
                     messageSnackbar!!.addCallback(
                         object : BaseCallback<Snackbar?>() {

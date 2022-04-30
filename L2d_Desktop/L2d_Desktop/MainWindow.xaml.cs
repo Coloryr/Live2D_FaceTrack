@@ -89,7 +89,6 @@ namespace L2d_Desktop
         private void Dis() 
         {
             isConnect = false;
-            Group_Model.IsEnabled = false;
             Group_Setting.IsEnabled = true;
             DeviceList.IsEnabled = true;
             Res_Button.IsEnabled = true;
@@ -129,7 +128,6 @@ namespace L2d_Desktop
                 }
 
                 isConnect = true;
-                Group_Model.IsEnabled = true;
                 Group_Setting.IsEnabled = false;
                 DeviceList.IsEnabled = false;
                 Res_Button.IsEnabled = false;
@@ -210,6 +208,19 @@ namespace L2d_Desktop
                 Com_ParamBodyAngleZ.Items.Clear();
                 Com_ParamBreath.Items.Clear();
                 Com_ParamMouthOpenY.Items.Clear();
+
+                Com_ParamAngleX.Items.Add("");
+                Com_ParamAngleY.Items.Add("");
+                Com_ParamAngleZ.Items.Add("");
+                Com_ParamEyeLOpen.Items.Add("");
+                Com_ParamEyeROpen.Items.Add("");
+                Com_ParamEyeBallX.Items.Add("");
+                Com_ParamEyeBallY.Items.Add("");
+                Com_ParamBodyAngleX.Items.Add("");
+                Com_ParamBodyAngleY.Items.Add("");
+                Com_ParamBodyAngleZ.Items.Add("");
+                Com_ParamBreath.Items.Add("");
+                Com_ParamMouthOpenY.Items.Add("");
 
                 if (GLWindow.window.Parameters == null)
                     return;
@@ -472,6 +483,19 @@ namespace L2d_Desktop
                     Id = item.Id,
                     Opacitie = item.Opacitie
                 });
+            }
+        }
+
+        private void Window_Closing(object sender, CancelEventArgs e)
+        {
+            var res = new SelectWindow("是否要关闭软件").Set();
+            if (res)
+            {
+                App.ThisApp.Shutdown();
+            }
+            else
+            {
+                e.Cancel = true;
             }
         }
     }

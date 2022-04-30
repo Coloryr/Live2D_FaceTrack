@@ -30,7 +30,6 @@ namespace L2d_Desktop
         public const string PackOk = "Live2D server ok";
 
         public static bool CheckOk;
-        public static Semaphore Semaphore;
 
         private static MultithreadEventLoopGroup group = new MultithreadEventLoopGroup();
         public static IChannel clientChannel;
@@ -41,7 +40,6 @@ namespace L2d_Desktop
             {
                 try
                 {
-                    Semaphore = new(0, 5);
                     var bootstrap = new Bootstrap();
                     bootstrap
                         .Group(group)
@@ -53,7 +51,7 @@ namespace L2d_Desktop
                         }));
                     clientChannel = await bootstrap.ConnectAsync(new IPEndPoint(IPAddress.Parse("127.0.0.1"), MainWindow.Port));
                     SendTest();
-                    Semaphore.WaitOne(TimeSpan.FromSeconds(10));
+                    Thread.Sleep(5000);
                     return CheckOk;
                 }
                 catch (Exception e)
@@ -67,7 +65,6 @@ namespace L2d_Desktop
         public static async void Disconnect()
         {
             CheckOk = false;
-            Semaphore.Release();
             if (clientChannel != null)
             {
                 await clientChannel.CloseAsync();
@@ -76,7 +73,6 @@ namespace L2d_Desktop
 
         public static async void Close()
         {
-            Semaphore.Dispose();
             await clientChannel.CloseAsync();
             await group.ShutdownGracefullyAsync();
         }
@@ -95,7 +91,6 @@ namespace L2d_Desktop
                 {
                     CheckOk = true;
                 }
-                Semaphore.Release();
             }
             else
             {

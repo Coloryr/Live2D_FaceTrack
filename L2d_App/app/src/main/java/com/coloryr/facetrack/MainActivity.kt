@@ -42,13 +42,10 @@ class MainActivity : AppCompatActivity() {
         glView = GLView(baseContext)
         setContentView(R.layout.activity_main)
         imageView = findViewById(R.id.image)
-        val navView = findViewById<BottomNavigationView>(R.id.nav_view)
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
+        //val navView = findViewById<BottomNavigationView>(R.id.nav_view)
         val appBarConfiguration: AppBarConfiguration = AppBarConfiguration.Builder(
             R.id.navigation_dashboard
-        )
-            .build()
+        ).build()
         val navController = findNavController(this, R.id.nav_host_fragment_activity_main)
         setupActionBarWithNavController(this, navController, appBarConfiguration)
         eye = EyeTrack(this)

@@ -14,7 +14,7 @@ class GLView(context: Context) : GLSurfaceView(context) {
     private val _glRenderer: GLRenderer
 
     @SuppressLint("ClickableViewAccessibility")
-    val myTouchListener = OnTouchListener { v: View?, event: MotionEvent ->
+    val myTouchListener = OnTouchListener { _: View?, event: MotionEvent ->
         //处理手势事件（根据个人需要去返回和逻辑的处理）
         val pointX = event.x
         val pointY = event.y
