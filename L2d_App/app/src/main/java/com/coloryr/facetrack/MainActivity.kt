@@ -126,11 +126,15 @@ class MainActivity : AppCompatActivity() {
             }
         }
         eye!!.init()
+        val intent1 = Intent(this, ConnectService::class.java)
+        this.startService(intent1)
     }
 
     override fun onPause() {
         super.onPause()
         ar!!.onPause()
+        val intent1 = Intent(this, ConnectService::class.java)
+        this.stopService(intent1)
     }
 
     companion object {

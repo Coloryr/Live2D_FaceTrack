@@ -60,6 +60,7 @@ class ConnectService : Service() {
         super.onDestroy()
         //对关闭通道进行监听
         try {
+            isStart = false
             channelFuture!!.channel().close()
             bossGroup.shutdownGracefully()
             workerGroup.shutdownGracefully()
