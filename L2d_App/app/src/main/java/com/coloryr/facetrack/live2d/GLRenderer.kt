@@ -17,17 +17,17 @@ import javax.microedition.khronos.opengles.GL10
 class GLRenderer : GLSurfaceView.Renderer {
     override fun onSurfaceCreated(gl: GL10, config: EGLConfig) {
         JniBridgeJava.nativeOnSurfaceCreated()
-        MainActivity.ar!!.onSurfaceCreated()
+        MainActivity.ar.onSurfaceCreated()
     }
 
     override fun onSurfaceChanged(gl: GL10, width: Int, height: Int) {
         JniBridgeJava.nativeOnSurfaceChanged(width, height)
-        MainActivity.ar!!.onSurfaceChanged(width, height)
+        MainActivity.ar.onSurfaceChanged(width, height)
     }
 
     override fun onDrawFrame(gl: GL10) {
         val start = System.currentTimeMillis()
-        MainActivity.ar!!.onDrawFrame()
+        MainActivity.ar.onDrawFrame()
         JniBridgeJava.nativeOnDrawFrame()
         SocketUtils.send()
         val end = System.currentTimeMillis()

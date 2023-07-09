@@ -10,6 +10,7 @@ import androidx.exifinterface.media.ExifInterface
 import com.coloryr.facetrack.live2d.TrackSave
 import com.google.android.renderscript.Toolkit.yuvToRgbBitmap
 import com.google.android.renderscript.YuvFormat
+import com.google.mediapipe.solutions.facedetection.FaceDetectionResult
 import com.google.mediapipe.solutions.facemesh.FaceMesh
 import com.google.mediapipe.solutions.facemesh.FaceMeshOptions
 import com.google.mediapipe.solutions.facemesh.FaceMeshResult

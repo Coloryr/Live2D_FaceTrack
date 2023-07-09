@@ -1,6 +1,6 @@
 package com.coloryr.facetrack.live2d
 
-data class CubismParam (
+data class CubismParam(
     var id: String? = null,
     var minimumValue: Float = 0f,
     var maximumValue: Float = 0f,

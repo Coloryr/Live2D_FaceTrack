@@ -5,23 +5,15 @@ import android.annotation.SuppressLint
 import android.app.*
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
-import android.widget.Button
-import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.navigation.Navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.NavigationUI.setupActionBarWithNavController
-import com.coloryr.facetrack.live2d.CubismParam
 import com.coloryr.facetrack.live2d.GLRenderer
 import com.coloryr.facetrack.live2d.GLView
 import com.coloryr.facetrack.live2d.JniBridgeJava
@@ -34,7 +26,6 @@ import com.coloryr.facetrack.track.eye.EyeTrack
 import java.io.PrintWriter
 import java.io.StringWriter
 import java.util.*
-import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity() {
     private val messageSnackbarHelper = SnackbarHelper()
@@ -47,7 +38,7 @@ class MainActivity : AppCompatActivity() {
     private var constraintLayout: RelativeLayout? = null
 
     override fun attachBaseContext(base: Context) {
-        super.attachBaseContext(base);
+        super.attachBaseContext(base)
 
         Handler(mainLooper).post {
             while (true) {
@@ -59,11 +50,11 @@ class MainActivity : AppCompatActivity() {
                         .setMessage(getErrorInfoFromException(e1))//内容
                         .setIcon(R.mipmap.ic_launcher)//图标
                         .create()
-                    alertDialog1.show();
+                    alertDialog1.show()
                     e1.printStackTrace()
                 }
             }
-        };
+        }
 
         Thread.setDefaultUncaughtExceptionHandler { t, e1 ->
             val alertDialog1 = AlertDialog.Builder(this)
@@ -71,7 +62,7 @@ class MainActivity : AppCompatActivity() {
                 .setMessage(getErrorInfoFromException(e1))//内容
                 .setIcon(R.mipmap.ic_launcher)//图标
                 .create()
-            alertDialog1.show();
+            alertDialog1.show()
             e1.printStackTrace()
         }
     }
@@ -111,7 +102,7 @@ class MainActivity : AppCompatActivity() {
             }
         }, 0, 1000)
         JniBridgeJava.ChangeModel()
-        glView!!.callAdd(constraintLayout)
+        glView.callAdd(constraintLayout)
         JniBridgeJava.LoadModel("sizuku", "shizuku")
 
         eye = EyeTrack(this)
@@ -135,36 +126,36 @@ class MainActivity : AppCompatActivity() {
 
     public override fun onResume() {
         super.onResume()
-        if (!ar!!.onResume()) {
+        if (!ar.onResume()) {
             ar = ArEngineTest(this)
-            if (!ar!!.onResume()) {
+            if (!ar.onResume()) {
                 messageSnackbarHelper.showError(this, "手机不支持AR功能")
             }
         }
-        eye!!.init()
+        eye.init()
         val intent1 = Intent(this, ConnectService::class.java)
         this.startService(intent1)
     }
 
     override fun onPause() {
         super.onPause()
-        ar!!.onPause()
+        ar.onPause()
         val intent1 = Intent(this, ConnectService::class.java)
         this.stopService(intent1)
     }
 
     companion object {
         @SuppressLint("StaticFieldLeak")
-        var app: MainActivity? = null
+        lateinit var app: MainActivity
 
         @SuppressLint("StaticFieldLeak")
-        var glView: GLView? = null
+        lateinit var glView: GLView
 
         @SuppressLint("StaticFieldLeak")
-        var ar: IAR? = null
+        lateinit var ar: IAR
 
         @SuppressLint("StaticFieldLeak")
-        var eye: EyeTrack? = null
+        lateinit var eye: EyeTrack
 
         @SuppressLint("StaticFieldLeak")
         private lateinit var fps: TextView
@@ -172,11 +163,11 @@ class MainActivity : AppCompatActivity() {
 
         fun makeNotification(title: String?, text: String?, ticker: String?) {
             @SuppressLint("UnspecifiedImmutableFlag") val pendingIntent = PendingIntent.getActivity(
-                app!!.applicationContext,
-                1, app!!.intent, PendingIntent.FLAG_CANCEL_CURRENT
+                app.applicationContext,
+                1, app.intent, PendingIntent.FLAG_CANCEL_CURRENT
             )
             val mBuilder = Notification.Builder(
-                app!!.applicationContext,
+                app.applicationContext,
                 "Live2DFaceTrack"
             )
             mBuilder.setContentTitle(title)
@@ -186,11 +177,11 @@ class MainActivity : AppCompatActivity() {
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true)
             val b = mBuilder.build()
-            app!!.mNManager!!.notify(1, b)
+            app.mNManager!!.notify(1, b)
         }
 
         fun run(runnable: Runnable?) {
-            app!!.mainHandler.post(runnable!!)
+            app.mainHandler.post(runnable!!)
         }
     }
 }

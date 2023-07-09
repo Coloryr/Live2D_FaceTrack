@@ -6,7 +6,7 @@ import androidx.core.content.ContextCompat
 
 object RgbaUtils {
     fun getRBitmap(id: Int): Bitmap {
-        val drawable = ContextCompat.getDrawable(MainActivity.Companion.app!!, id)
+        val drawable = ContextCompat.getDrawable(MainActivity.app, id)
         val bd = drawable as BitmapDrawable?
         return bd!!.bitmap
     }

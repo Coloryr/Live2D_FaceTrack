@@ -3,6 +3,7 @@ package com.coloryr.facetrack.track.arcore
 import android.app.Activity
 import android.content.Context
 import android.util.Log
+import android.util.Size
 import com.coloryr.facetrack.MainActivity
 import com.coloryr.facetrack.live2d.TrackSave
 import com.coloryr.facetrack.track.IAR
@@ -18,14 +19,9 @@ import java.util.*
 class ArCoreTest(private var activity: Activity) : IAR {
     private var session: Session? = null
     private val backgroundRenderer = BackgroundRenderer()
-    private val displayRotationHelper: DisplayRotationHelper
-    private val context: Context
+    private val displayRotationHelper: DisplayRotationHelper = DisplayRotationHelper(activity)
+    private val context: Context = activity.applicationContext
     private var installRequested = false
-
-    init {
-        displayRotationHelper = DisplayRotationHelper(activity)
-        context = activity.applicationContext
-    }
 
     override fun onSurfaceCreated() {
         // Prepare the rendering objects. This involves reading shaders, so may throw an IOException.
@@ -76,10 +72,11 @@ class ArCoreTest(private var activity: Activity) : IAR {
                 val cameraConfigFilter = CameraConfigFilter(session)
                 cameraConfigFilter.facingDirection = CameraConfig.FacingDirection.FRONT
                 val cameraConfigs = session!!.getSupportedCameraConfigs(cameraConfigFilter)
-                if (!cameraConfigs.isEmpty()) {
+                if (cameraConfigs.isNotEmpty()) {
                     // Element 0 contains the camera config that best matches the session feature
                     // and filter settings.
                     session!!.cameraConfig = cameraConfigs[0]
+
                 } else {
                     message = "This device does not have a front-facing (selfie) camera"
                     exception = UnavailableDeviceNotCompatibleException(message)
@@ -152,7 +149,7 @@ class ArCoreTest(private var activity: Activity) : IAR {
                 TrackSave.AngleZ = z * 200
             }
             val image = frame.acquireCameraImage()
-            MainActivity.Companion.eye!!.onCameraFrame(image)
+            MainActivity.eye.onCameraFrame(image)
             image.close()
         } catch (ignored: NotYetAvailableException) {
         } catch (t: Throwable) {

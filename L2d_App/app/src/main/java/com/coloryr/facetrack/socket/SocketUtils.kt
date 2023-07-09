@@ -4,7 +4,7 @@ import com.coloryr.facetrack.MainActivity
 import com.coloryr.facetrack.live2d.TrackSave
 import io.netty.buffer.ByteBuf
 import io.netty.buffer.Unpooled
-import io.netty.channel.*
+import io.netty.channel.Channel
 import io.netty.util.CharsetUtil
 import java.nio.charset.StandardCharsets
 
@@ -28,8 +28,7 @@ object SocketUtils {
                 })
             }
         } else {
-            val type = pack.readShort()
-            when (type) {
+            when (pack.readShort()) {
 
             }
         }

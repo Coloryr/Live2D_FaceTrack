@@ -18,13 +18,8 @@ class ArEngineTest(private val activity: Activity) : IAR {
     private lateinit var mArConfig: ARConfigBase
     private val messageSnackbarHelper = SnackbarHelper()
     private val backgroundRenderer = BackgroundRenderer()
-    private val displayRotationHelper: DisplayRotationHelper
-    private val context: Context
-
-    init {
-        displayRotationHelper = DisplayRotationHelper(activity)
-        context = activity.applicationContext
-    }
+    private val displayRotationHelper: DisplayRotationHelper = DisplayRotationHelper(activity)
+    private val context: Context = activity.applicationContext
 
     override fun onSurfaceCreated() {
         // Prepare the rendering objects. This involves reading shaders, so may throw an IOException.
@@ -60,8 +55,8 @@ class ArEngineTest(private val activity: Activity) : IAR {
                 // Create the session and configure it to use a front-facing (selfie) camera.
                 session = ARSession(activity)
                 mArConfig = ARFaceTrackingConfig(session)
-                mArConfig.setLightingMode(ARConfigBase.LIGHT_MODE_ENVIRONMENT_LIGHTING)
-                mArConfig.setPowerMode(ARConfigBase.PowerMode.POWER_SAVING)
+                mArConfig.lightingMode = ARConfigBase.LIGHT_MODE_ENVIRONMENT_LIGHTING
+                mArConfig.powerMode = ARConfigBase.PowerMode.POWER_SAVING
                 session!!.configure(mArConfig)
             } catch (e: Exception) {
                 message = "Failed to create AR session"
@@ -112,7 +107,7 @@ class ArEngineTest(private val activity: Activity) : IAR {
                 TrackSave.AngleZ = z * 200
             }
             val image = frame.acquireCameraImage()
-            MainActivity.Companion.eye!!.onCameraFrame(image)
+            MainActivity.eye.onCameraFrame(image)
             image.close()
         } catch (ignored: Exception) {
         } catch (t: Throwable) {
