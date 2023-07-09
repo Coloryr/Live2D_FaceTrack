@@ -1,239 +1,269 @@
-﻿using OpenTK.Graphics.OpenGL;
+﻿using Live2DCSharpSDK.App;
+using OpenTK.Graphics.OpenGL4;
 using OpenTK.Windowing.Common;
-using OpenTK.WinForms;
+using OpenTK.Windowing.Desktop;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Forms;
-using System.Windows.Resources;
+using System.Xml.Linq;
+using ErrorCode = OpenTK.Graphics.OpenGL4.ErrorCode;
 
-namespace L2d_Desktop
+namespace L2d_Desktop;
+
+public class GLWindow : GameWindow
 {
-    /// <summary>
-    /// GLWindow.xaml 的交互逻辑
-    /// </summary>
-    public partial class GLWindow : Window
+    public static GLWindow window;
+    private LAppDelegate lapp;
+    public List<string> Expressions;
+    public List<string> Motions;
+    public List<(string, int, float)> Parts;
+    public List<string> Parameters;
+
+    private LAppModel _model;
+    private Timer _timer = null!;
+    private Random random = new();
+    private DateTime beginTime = DateTime.Now;            //获取开始时间  
+
+    private byte[] data;
+    private byte[] rgbvalues;
+
+    private int ParamAngleX =-1;
+    private int ParamAngleY = -1;
+    private int ParamAngleZ = -1;
+    private int ParamEyeLOpen = -1;
+    private int ParamEyeROpen = -1;
+    private int ParamEyeBallX = -1;
+    private int ParamEyeBallY = -1;
+    private int ParamMouthOpenY = -1;
+    private int ParamBodyAngleY = -1;
+    private int ParamBodyAngleZ = -1;
+
+    public GLWindow(GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings)
+            : base(gameWindowSettings, nativeWindowSettings)
     {
-        public static GLWindow window;
-        public Live2dApp live2d;
-        public string[] Expressions;
-        public Motion[] Motions;
-        public Part[] Parts;
-        public Parameter[] Parameters;
+        window = this;
+        var version = GL.GetString(StringName.Version);
 
-        private Timer _timer = null!;
-        private GLControl glControl;
-        private Random random = new();
-        private DateTime beginTime = DateTime.Now;            //获取开始时间  
+    }
 
-        private byte[] data;
-        private byte[] rgbvalues;
-
-        private int ParamAngleX =-1;
-        private int ParamAngleY = -1;
-        private int ParamAngleZ = -1;
-        private int ParamEyeLOpen = -1;
-        private int ParamEyeROpen = -1;
-        private int ParamEyeBallX = -1;
-        private int ParamEyeBallY = -1;
-        private int ParamMouthOpenY = -1;
-        private int ParamBodyAngleY = -1;
-        private int ParamBodyAngleZ = -1;
-
-        public GLWindow()
+    public void BGR24ToBitmap()
+    {
+        if (data != null)
         {
-            InitializeComponent();
-            window = this;
-            live2d = new(LoadFile, LoadDone, Update);
-        }
+            //构造一个位图数组进行数据存储
+            if (rgbvalues == null || rgbvalues.Length != data.Length)
+                rgbvalues = new byte[data.Length];
 
-        public void BGR24ToBitmap()
-        {
-            if (data != null)
+            //对每一个像素的颜色进行转化
+            for (int i = 0; i < rgbvalues.Length; i += 4)
             {
-                //构造一个位图数组进行数据存储
-                if (rgbvalues == null || rgbvalues.Length != data.Length)
-                    rgbvalues = new byte[data.Length];
+                rgbvalues[i + 3] = data[i + 3];
+                rgbvalues[i + 2] = data[i + 0];
+                rgbvalues[i + 1] = data[i + 1];
+                rgbvalues[i] = data[i + 2];
+            }
 
-                //对每一个像素的颜色进行转化
-                for (int i = 0; i < rgbvalues.Length; i += 4)
-                {
-                    rgbvalues[i + 3] = data[i + 3];
-                    rgbvalues[i + 2] = data[i + 0];
-                    rgbvalues[i + 1] = data[i + 1];
-                    rgbvalues[i] = data[i + 2];
-                }
+            VCamera.Send(ClientSize.X, ClientSize.Y, rgbvalues);
+        }
+    }
 
-                VCamera.Send(glControl.Width, glControl.Height, rgbvalues);
+    public void CheckIndex() 
+    {
+        foreach (var item in Parts)
+        {
+            var name = item.Item1;
+            if (name == App.Config.ParamAngleX)
+            {
+                ParamAngleX = item.Item2;
+            }
+            if (name == App.Config.ParamAngleY)
+            {
+                ParamAngleY = item.Item2;
+            }
+            if (name == App.Config.ParamAngleZ)
+            {
+                ParamAngleZ = item.Item2;
+            }
+            if (name == App.Config.ParamEyeLOpen)
+            {
+                ParamEyeLOpen = item.Item2;
+            }
+            if (name == App.Config.ParamEyeROpen)
+            {
+                ParamEyeROpen = item.Item2;
+            }
+            if (name == App.Config.ParamEyeBallX)
+            {
+                ParamEyeBallX = item.Item2;
+            }
+            if (name == App.Config.ParamEyeBallY)
+            {
+                ParamEyeBallY = item.Item2;
+            }
+            if (name == App.Config.ParamMouthOpenY)
+            {
+                ParamMouthOpenY = item.Item2;
+            }
+            if (name == App.Config.ParamBodyAngleY)
+            {
+                ParamBodyAngleY = item.Item2;
+            }
+            if (name == App.Config.ParamBodyAngleZ)
+            {
+                ParamBodyAngleZ = item.Item2;
             }
         }
+    }
 
-        public void CheckIndex() 
+    private void Update(LAppModel model)
+    {
+        model.Model.AddParameterValue(ParamAngleX, ValueSave.ParamAngleX);
+        model.Model.AddParameterValue(ParamAngleY, ValueSave.ParamAngleY);
+        model.Model.AddParameterValue(ParamAngleZ, ValueSave.ParamAngleZ);
+        model.Model.AddParameterValue(ParamEyeLOpen, ValueSave.ParamEyeLOpen);
+        model.Model.AddParameterValue(ParamEyeROpen, ValueSave.ParamEyeROpen);
+        model.Model.AddParameterValue(ParamEyeBallX, ValueSave.ParamEyeBallX);
+        model.Model.AddParameterValue(ParamEyeBallY, ValueSave.ParamEyeBallY);
+        model.Model.AddParameterValue(ParamMouthOpenY, ValueSave.ParamMouthOpenY);
+        model.Model.AddParameterValue(ParamBodyAngleZ, ValueSave.ParamBodyAngleZ);
+        model.Model.AddParameterValue(ParamBodyAngleY, ValueSave.ParamBodyAngleY);
+    }
+
+    protected unsafe override void OnLoad()
+    {
+        base.OnLoad();
+        lapp = new(new OpenTKApi(this), Console.WriteLine);
+
+        if (File.Exists(App.Config.Local) && App.Config.Local.EndsWith(".model3.json"))
         {
-            for (int a = 0; a < Parameters.Length; a++)
-            {
-                var item = Parameters[a];
-                if (item.Id == App.Config.ParamAngleX)
-                {
-                    ParamAngleX = a;
-                }
-                if (item.Id == App.Config.ParamAngleY)
-                {
-                    ParamAngleY = a;
-                }
-                if (item.Id == App.Config.ParamAngleZ)
-                {
-                    ParamAngleZ = a;
-                }
-                if (item.Id == App.Config.ParamEyeLOpen)
-                {
-                    ParamEyeLOpen = a;
-                }
-                if (item.Id == App.Config.ParamEyeROpen)
-                {
-                    ParamEyeROpen = a;
-                }
-                if (item.Id == App.Config.ParamEyeBallX)
-                {
-                    ParamEyeBallX = a;
-                }
-                if (item.Id == App.Config.ParamEyeBallY)
-                {
-                    ParamEyeBallY = a;
-                }
-                if (item.Id == App.Config.ParamMouthOpenY)
-                {
-                    ParamMouthOpenY = a;
-                }
-                if (item.Id == App.Config.ParamBodyAngleY)
-                {
-                    ParamBodyAngleY = a;
-                }
-                if (item.Id == App.Config.ParamBodyAngleZ)
-                {
-                    ParamBodyAngleZ = a;
-                }
-            }
+            FileInfo info = new(App.Config.Local);
+            LoadModel(info.DirectoryName + "/", info.Name);
+        }
+    }
+
+    internal void LoadModel(string v, string name)
+    {
+        if (_model != null)
+        {
+            lapp.Live2dManager.ReleaseAllModel();   
+        }
+        _model = lapp.Live2dManager.LoadModel(v, name.Replace(".model3.json", ""));
+
+        _model.RandomMotion = false;
+        _model.CustomValueUpdate = true;
+
+        Expressions = _model.Expressions;
+        Motions = _model.Motions;
+        Parts = _model.Parts;
+        Parameters = _model.Parameters;
+
+        _model.ValueUpdate = Update;
+
+        MainWindow.main.LoadDone();
+    }
+
+    protected override void OnRenderFrame(FrameEventArgs e)
+    {
+        base.OnRenderFrame(e);
+
+        GL.ClearColor((float)App.Config.Color_R / 255, (float)App.Config.Color_G / 255, (float)App.Config.Color_B / 255, 1.0f);
+        GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+        GL.ClearDepth(1.0);
+
+        lapp.Run((float)RenderTime);
+
+        GL.ReadPixels(0, 0, ClientSize.X, ClientSize.Y, PixelFormat.Rgba, PixelType.UnsignedByte, data);
+        BGR24ToBitmap();
+
+        var code = GL.GetError();
+        if (code != ErrorCode.NoError)
+        {
+            throw new Exception();
         }
 
-        private void Update()
+        SwapBuffers();
+    }
+
+    protected override void OnResize(ResizeEventArgs e)
+    {
+        base.OnResize(e);
+
+        lapp.Resize();
+
+        data = new byte[e.Width * e.Height * 4];
+
+        VCamera.Set((ushort)e.Width, (ushort)e.Height);
+
+        GL.Viewport(0, 0, e.Width, e.Height);
+    }
+
+    protected override void OnUpdateFrame(FrameEventArgs e)
+    {
+        base.OnUpdateFrame(e);
+    }
+
+    private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+    {
+        var res = new SelectWindow("是否要关闭软件").Set();
+        if (res)
         {
-            live2d.AddParameterValue(ParamAngleX, ValueSave.ParamAngleX);
-            live2d.AddParameterValue(ParamAngleY, ValueSave.ParamAngleY);
-            live2d.AddParameterValue(ParamAngleZ, ValueSave.ParamAngleZ);
-            live2d.AddParameterValue(ParamEyeLOpen, ValueSave.ParamEyeLOpen);
-            live2d.AddParameterValue(ParamEyeROpen, ValueSave.ParamEyeROpen);
-            live2d.AddParameterValue(ParamEyeBallX, ValueSave.ParamEyeBallX);
-            live2d.AddParameterValue(ParamEyeBallY, ValueSave.ParamEyeBallY);
-            live2d.AddParameterValue(ParamMouthOpenY, ValueSave.ParamMouthOpenY);
-            live2d.AddParameterValue(ParamBodyAngleZ, ValueSave.ParamBodyAngleZ);
-            live2d.AddParameterValue(ParamBodyAngleY, ValueSave.ParamBodyAngleY);
+            App.ThisApp.Shutdown();
         }
-
-        private void LoadDone(string name)
+        else
         {
-            live2d.SetRandomMotion(false);
-            live2d.SetCustomValue(true);
-
-            Expressions = live2d.GetExpressions();
-            Motions = live2d.GetMotions();
-            Parts = live2d.GetParts();
-            Parameters = live2d.GetParameters();
-
-            MainWindow.main.LoadDone();
+            e.Cancel = true;
         }
+    }
 
-        private IntPtr LoadFile(string path, ref uint size)
-        {
-            var temp = File.ReadAllBytes(path);
-            IntPtr inputBuffer = Marshal.AllocHGlobal(temp.Length * sizeof(byte));
-            Marshal.Copy(temp, 0, inputBuffer, temp.Length);
-            size = (uint)temp.Length;
-            return inputBuffer;
-        }
+    internal void SetSize(ushort c_Width, ushort c_Height)
+    {
+        Size = new(c_Width, c_Height);
+    }
 
-        internal void SetSize(ushort c_Width, ushort c_Height)
-        {
-            Width = c_Width;
-            Height = c_Height;
+    internal void InitBreath()
+    {
+        _model.LoadBreath();
+    }
 
-            data = new byte[glControl.Width * glControl.Height * 4];
+    internal void SetIdParamAngleX(string paramAngleX)
+    {
+        _model.IdParamAngleX = paramAngleX;
+    }
 
-            VCamera.Set((ushort)glControl.Width, (ushort)glControl.Height);
-        }
+    internal void SetIdParamAngleY(string paramAngleY)
+    {
+        _model.IdParamAngleY = paramAngleY;
+    }
 
-        private void GlControl_Load(object? sender, EventArgs e)
-        {
-            glControl.Paint += glControl_Paint;
+    internal void SetIdParamAngleZ(string item)
+    {
+        _model.IdParamAngleZ = item;
+    }
 
-            _timer = new Timer();
-            _timer.Tick += (sender, e) =>
-            {
-                Render();
-            };
-            _timer.Interval = 10;   // 1000 ms per sec / 10 ms per frame = 100 FPS
-            _timer.Start();
+    internal void SetIdParamBodyAngleX(string item)
+    {
+        _model.IdParamBodyAngleX = item;
+    }
 
-            live2d.Start(glControl.ClientSize.Width, glControl.ClientSize.Height);
-            if (File.Exists(App.Config.Local) && App.Config.Local.EndsWith(".model3.json"))
-            {
-                FileInfo info = new(App.Config.Local);
+    internal void SetIdParamEyeBallX(string paramEyeBallX)
+    {
+        _model.IdParamEyeBallX = paramEyeBallX;
+    }
 
-                live2d.LoadModel(info.DirectoryName + "/", info.Name);
-            }
-        }
+    internal void SetIdParamEyeBallY(string paramEyeBallY)
+    {
+        _model.IdParamEyeBallY = paramEyeBallY;
+    }
 
-        private void glControl_Paint(object? sender, PaintEventArgs e)
-        {
-            Render();
-        }
+    internal void SetIdParamBreath(string paramBreath)
+    {
+        _model.IdParamBreath = paramBreath;
+    }
 
-        private void Render()
-        {
-            glControl.MakeCurrent();
-
-            GL.ClearColor((float)App.Config.Color_R/255, (float)App.Config.Color_G/255, (float)App.Config.Color_B/255, 1.0f);
-            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-            GL.ClearDepth(1.0);
-
-            live2d.Tick(glControl.Width, glControl.Height, (DateTime.Now - beginTime).TotalMilliseconds / 1000);
-
-            glControl.SwapBuffers();
-
-            GL.ReadPixels(0, 0, glControl.Width, glControl.Height, PixelFormat.Rgba, PixelType.UnsignedByte, data);
-            BGR24ToBitmap();
-        }
-
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            var set = GLControlSettings.Default.Clone();
-            set.API = ContextAPI.OpenGL;
-            set.Flags = ContextFlags.Default;
-            set.IsEventDriven = true;
-            set.Profile = ContextProfile.Compatability;
-            set.APIVersion = new Version(3, 3, 0, 0);
-            glControl = new GLControl(set);//创建GLControl控件
-
-            glControl.Load += GlControl_Load;
-            Host.Child = glControl;//将控件放在WindowsFormsHost控件中
-        }
-
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            var res = new SelectWindow("是否要关闭软件").Set();
-            if (res)
-            {
-                App.ThisApp.Shutdown();
-            }
-            else
-            {
-                e.Cancel = true;
-            }
-        }
+    internal void SetPartOpacitie(string id, float value)
+    {
+        _model.Model.SetPartOpacity(id, value);
     }
 }

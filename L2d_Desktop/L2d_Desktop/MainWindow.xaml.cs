@@ -1,4 +1,7 @@
 ﻿using Microsoft.Win32;
+using OpenTK.Mathematics;
+using OpenTK.Windowing.Common;
+using OpenTK.Windowing.Desktop;
 using SharpAdbClient;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -64,11 +67,19 @@ namespace L2d_Desktop
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            new GLWindow().Show();
+            var nativeWindowSettings = new NativeWindowSettings()
+            {
+                Size = new Vector2i(App.Config.C_Width, App.Config.C_Height),
+                Title = "Live2D",
+                // This is needed to run on macos
+                Flags = ContextFlags.ForwardCompatible,
+                Vsync = VSyncMode.Adaptive
+            };
+
             VCamera.Test();
-            GLWindow.window.SetSize(App.Config.C_Width, App.Config.C_Height);
             AdbUtils.Start();
             ResDevices();
+            new GLWindow(GameWindowSettings.Default, nativeWindowSettings).Run();
         }
 
         private void ResDevices() 
@@ -159,7 +170,7 @@ namespace L2d_Desktop
                 FileInfo info = new(filename);
                 App.Config.Local = filename;
                 App.SaveConfig();
-                GLWindow.window.live2d.LoadModel(info.DirectoryName + "/", info.Name);
+                GLWindow.window.LoadModel(info.DirectoryName + "/", info.Name);
             }
         }
 
@@ -227,34 +238,34 @@ namespace L2d_Desktop
 
                 foreach (var item in GLWindow.window.Parameters)
                 {
-                    Com_ParamAngleX.Items.Add(item.Id);
-                    Com_ParamAngleY.Items.Add(item.Id);
-                    Com_ParamAngleZ.Items.Add(item.Id);
-                    Com_ParamEyeLOpen.Items.Add(item.Id);
-                    Com_ParamEyeROpen.Items.Add(item.Id);
-                    Com_ParamEyeBallX.Items.Add(item.Id);
-                    Com_ParamEyeBallY.Items.Add(item.Id);
-                    Com_ParamBodyAngleX.Items.Add(item.Id);
-                    Com_ParamBodyAngleY.Items.Add(item.Id);
-                    Com_ParamBodyAngleZ.Items.Add(item.Id);
-                    Com_ParamBreath.Items.Add(item.Id);
-                    Com_ParamMouthOpenY.Items.Add(item.Id);
+                    Com_ParamAngleX.Items.Add(item);
+                    Com_ParamAngleY.Items.Add(item);
+                    Com_ParamAngleZ.Items.Add(item);
+                    Com_ParamEyeLOpen.Items.Add(item);
+                    Com_ParamEyeROpen.Items.Add(item);
+                    Com_ParamEyeBallX.Items.Add(item);
+                    Com_ParamEyeBallY.Items.Add(item);
+                    Com_ParamBodyAngleX.Items.Add(item);
+                    Com_ParamBodyAngleY.Items.Add(item);
+                    Com_ParamBodyAngleZ.Items.Add(item);
+                    Com_ParamBreath.Items.Add(item);
+                    Com_ParamMouthOpenY.Items.Add(item);
                 }
 
                 if (Com_ParamAngleX.Items.Contains(App.Config.ParamAngleX))
                 {
                     Com_ParamAngleX.SelectedItem = App.Config.ParamAngleX;
-                    GLWindow.window.live2d.SetIdParamAngleX(App.Config.ParamAngleX);
+                    GLWindow.window.SetIdParamAngleX(App.Config.ParamAngleX);
                 }
                 if (Com_ParamAngleY.Items.Contains(App.Config.ParamAngleY))
                 {
                     Com_ParamAngleY.SelectedItem = App.Config.ParamAngleY;
-                    GLWindow.window.live2d.SetIdParamAngleY(App.Config.ParamAngleY);
+                    GLWindow.window.SetIdParamAngleY(App.Config.ParamAngleY);
                 }
                 if (Com_ParamAngleZ.Items.Contains(App.Config.ParamAngleZ))
                 {
                     Com_ParamAngleZ.SelectedItem = App.Config.ParamAngleZ;
-                    GLWindow.window.live2d.SetIdParamAngleZ(App.Config.ParamAngleZ);
+                    GLWindow.window.SetIdParamAngleZ(App.Config.ParamAngleZ);
                 }
                 if (Com_ParamEyeLOpen.Items.Contains(App.Config.ParamEyeLOpen))
                 {
@@ -267,17 +278,17 @@ namespace L2d_Desktop
                 if (Com_ParamEyeBallX.Items.Contains(App.Config.ParamEyeBallX))
                 {
                     Com_ParamEyeBallX.SelectedItem = App.Config.ParamEyeBallX;
-                    GLWindow.window.live2d.SetIdParamEyeBallX(App.Config.ParamEyeBallX);
+                    GLWindow.window.SetIdParamEyeBallX(App.Config.ParamEyeBallX);
                 }
                 if (Com_ParamEyeBallY.Items.Contains(App.Config.ParamEyeBallY))
                 {
                     Com_ParamEyeBallY.SelectedItem = App.Config.ParamEyeBallY;
-                    GLWindow.window.live2d.SetIdParamEyeBallY(App.Config.ParamEyeBallY);
+                    GLWindow.window.SetIdParamEyeBallY(App.Config.ParamEyeBallY);
                 }
                 if (Com_ParamBodyAngleX.Items.Contains(App.Config.ParamBodyAngleX))
                 {
                     Com_ParamBodyAngleX.SelectedItem = App.Config.ParamBodyAngleX;
-                    GLWindow.window.live2d.SetIdParamBodyAngleX(App.Config.ParamBodyAngleX);
+                    GLWindow.window.SetIdParamBodyAngleX(App.Config.ParamBodyAngleX);
                 }
                 if (Com_ParamBodyAngleY.Items.Contains(App.Config.ParamBodyAngleY))
                 {
@@ -290,13 +301,13 @@ namespace L2d_Desktop
                 if (Com_ParamBreath.Items.Contains(App.Config.ParamBreath))
                 {
                     Com_ParamBreath.SelectedItem = App.Config.ParamBreath;
-                    GLWindow.window.live2d.SetIdParamBreath(App.Config.ParamBreath);
+                    GLWindow.window.SetIdParamBreath(App.Config.ParamBreath);
                 }
                 if (Com_ParamMouthOpenY.Items.Contains(App.Config.ParamMouthOpenY))
                 {
                     Com_ParamMouthOpenY.SelectedItem = App.Config.ParamMouthOpenY;
                 }
-                GLWindow.window.live2d.InitBreath();
+                GLWindow.window.InitBreath();
                 GLWindow.window.CheckIndex();
             });
         }
@@ -308,8 +319,8 @@ namespace L2d_Desktop
                 return;
 
             App.Config.ParamAngleX = item;
-            GLWindow.window.live2d.SetIdParamAngleX(item);
-            GLWindow.window.live2d.InitBreath();
+            GLWindow.window.SetIdParamAngleX(item);
+            GLWindow.window.InitBreath();
             GLWindow.window.CheckIndex();
 
             App.SaveConfig();
@@ -322,8 +333,8 @@ namespace L2d_Desktop
                 return;
 
             App.Config.ParamAngleY = item;
-            GLWindow.window.live2d.SetIdParamAngleY(item);
-            GLWindow.window.live2d.InitBreath();
+            GLWindow.window.SetIdParamAngleY(item);
+            GLWindow.window.InitBreath();
             GLWindow.window.CheckIndex();
 
             App.SaveConfig();
@@ -336,8 +347,8 @@ namespace L2d_Desktop
                 return;
 
             App.Config.ParamAngleZ = item;
-            GLWindow.window.live2d.SetIdParamAngleZ(item);
-            GLWindow.window.live2d.InitBreath();
+            GLWindow.window.SetIdParamAngleZ(item);
+            GLWindow.window.InitBreath();
             GLWindow.window.CheckIndex();
 
             App.SaveConfig();
@@ -398,8 +409,8 @@ namespace L2d_Desktop
                 return;
 
             App.Config.ParamBodyAngleX = item;
-            GLWindow.window.live2d.SetIdParamBodyAngleX(item);
-            GLWindow.window.live2d.InitBreath();
+            GLWindow.window.SetIdParamBodyAngleX(item);
+            GLWindow.window.InitBreath();
             GLWindow.window.CheckIndex();
 
             App.SaveConfig();
@@ -412,8 +423,8 @@ namespace L2d_Desktop
                 return;
 
             App.Config.ParamBreath = item;
-            GLWindow.window.live2d.SetIdParamBodyAngleX(item);
-            GLWindow.window.live2d.InitBreath();
+            GLWindow.window.SetIdParamBodyAngleX(item);
+            GLWindow.window.InitBreath();
             GLWindow.window.CheckIndex();
 
             App.SaveConfig();
@@ -463,13 +474,13 @@ namespace L2d_Desktop
 
             var value = new InputBoxWindow(item.Opacitie).Set();
 
-            GLWindow.window.live2d.SetPartOpacitie(item.Id, value);
+            GLWindow.window.SetPartOpacitie(item.Id, value);
             item.Opacitie = value;
         }
 
         private void MenuItem_Click1(object sender, RoutedEventArgs e) 
         {
-            var list = GLWindow.window.live2d.GetParts();
+            var list = GLWindow.window.Parts;
             if (list == null)
             {
                 return;
@@ -480,8 +491,8 @@ namespace L2d_Desktop
             {
                 Part_List.Items.Add(new PartOb()
                 {
-                    Id = item.Id,
-                    Opacitie = item.Opacitie
+                    Id = item.Item1,
+                    Opacitie = item.Item3
                 });
             }
         }

@@ -20,9 +20,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="GLWindow.xaml">
-      <SubType>Designer</SubType>
-    </Page>
     <Page Update="InputBoxWindow.xaml">
       <SubType>Designer</SubType>
     </Page>
